@@ -15,7 +15,6 @@ class PhoneNumberScreen extends StatefulWidget {
   @override
   State<PhoneNumberScreen> createState() => _PhoneNumberScreenState();
 }
-
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   String dropdownvalue = 'CA +1';

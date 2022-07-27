@@ -37,6 +37,7 @@ dependencies:
   google_fonts:
   provider: ^6.0.3
   fluttertoast:
+  emoji_picker_flutter:
   blur:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

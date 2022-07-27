@@ -9,7 +9,6 @@ import 'package:page_transition/page_transition.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -35,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const Spacer(),
           Column(
-
             children: [
               // ElevatedButton(onPressed: (){}, child: )
               CustomButtonWithIcon(
@@ -43,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 45,
                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                 backgroundColor: ColorResources.whiteColor,
-                onPressed: (){},
+                onPressed: loginWithGoogle,
                 buttonText: 'Continue With Google',
                 fontSize: 16.0,
                 textColor: ColorResources.blackColor,
@@ -56,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 45,
                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                 backgroundColor: const Color(0xff3B5999),
-                onPressed: (){},
+                onPressed: loginWithFacebook,
                 buttonText: 'Continue With Facebook',
                 fontSize: 16.0,
                 textColor: ColorResources.whiteColor,
@@ -69,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 45,
                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                 backgroundColor: ColorResources.blackColor,
-                onPressed: (){},
+                onPressed: loginWithApple,
                 buttonText: 'Continue With Apple',
                 fontSize: 16.0,
                 textColor: ColorResources.whiteColor,
@@ -81,10 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 45,
                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                 backgroundColor: ColorResources.whiteColor,
-                onPressed: (){
-                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const PhoneNumberScreen()));
-
-                },
+                onPressed:loginWithPhoneNumber,
                 buttonText: 'Continue With Phone Number',
                 fontSize: 16.0,
                 textColor: ColorResources.blackColor,
@@ -115,5 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       )
     );
+  }
+  loginWithGoogle(){}
+  loginWithFacebook(){}
+  loginWithApple(){}
+  loginWithPhoneNumber(){
+    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const PhoneNumberScreen()));
   }
 }

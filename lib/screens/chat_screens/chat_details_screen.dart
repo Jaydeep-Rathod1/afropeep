@@ -1,6 +1,7 @@
 import 'package:afropeep/screens/chat_screens/audio_call_screen.dart';
 import 'package:afropeep/screens/chat_screens/video_call_screen.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:afropeep/widgets/input_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -164,7 +165,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
               ),*/
               Expanded(
                   child: Image.asset('assets/images/conversation.png',fit: BoxFit.fill,)),
-              Align(
+              /*Align(
                 alignment: Alignment.bottomCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -173,7 +174,6 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                         children: [
                           Container(
                             width: MediaQuery.of(context).size.width ,
-
                             child: Card(
                               margin: EdgeInsets.only(
                                   left: 20, right: 20, bottom: 8),
@@ -296,7 +296,8 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                       Container(),
                     ],
                   ),
-                ),
+                ),*/
+                InputWidget()
 
             ],
           ),
