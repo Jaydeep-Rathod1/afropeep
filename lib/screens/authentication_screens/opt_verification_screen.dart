@@ -1,6 +1,7 @@
 
 
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/screens/onboarding_screen/choose_mode_to_start_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -72,7 +73,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       height: 45,
                       backgroundColor: ColorResources.blackColor,
                       onPressed: (){
-                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: OnboardingScreen()));
+                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
 
                       },
                       buttonText: 'Verify',

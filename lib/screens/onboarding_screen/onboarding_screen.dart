@@ -35,7 +35,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: EdgeInsets.only(left: 20,right: 20),
               child: InkWell(
                   onTap: (){
-                    if(_pageController.page.toInt() > 1)
+                    Navigator.pop(context, PageTransition(type: PageTransitionType.leftToRight, child: null,));
+                    /*if(_pageController.page.toInt() > 1)
                     {
                       print(_pageController.page.toInt() -1);
                       _pageController.animateToPage(_pageController.page.toInt() -1,
@@ -48,7 +49,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       if(_pageController.page.toInt() != 1)
                         Navigator.pop(context, PageTransition(type: PageTransitionType.leftToRight,));
 
-                    }
+                    }*/
 
                   },
                   child: Icon(Icons.arrow_back,color: ColorResources.whiteColor,)
@@ -57,7 +58,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(
             height: 32.0,
           ),
-         Flexible(
+          Flexible(
+            child:  Padding(
+              padding: EdgeInsets.only(left: 20,right: 20),
+              child: ChooseModeToStart(),
+            )
+          ),
+        /* Flexible(
            child:  Padding(
              padding: EdgeInsets.only(left: 20,right: 20),
              child: PageView(
@@ -76,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                ],
              ),
            ),
-         ),
+         ),*/
           Padding(
             padding: EdgeInsets.only(left: 20,right: 20),
             child:  Align(
@@ -86,7 +93,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   backgroundColor: ColorResources.blackColor,
                   onPressed: (){
                     // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                    if(_pageController.page.toInt()+1 >5)
+                    Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseGenderScreen()));
+                   /* if(_pageController.page.toInt()+1 >5)
                       {
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>FacialRecognitionScreen()));
                       }
@@ -95,7 +103,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           duration: Duration(milliseconds: 400),
                           curve: Curves.easeIn
                       );
-                    }
+                    }*/
                   },
                   buttonText: 'Next',
                   fontSize: 16.0,

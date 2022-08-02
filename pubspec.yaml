@@ -36,6 +36,7 @@ dependencies:
   swipe_cards:
   google_fonts:
   provider: ^6.0.3
+  dio:
   fluttertoast:
   emoji_picker_flutter:
   blur:

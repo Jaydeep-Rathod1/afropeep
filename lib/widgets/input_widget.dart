@@ -1,7 +1,3 @@
-
-import 'dart:html';
-import 'dart:io';
-
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';

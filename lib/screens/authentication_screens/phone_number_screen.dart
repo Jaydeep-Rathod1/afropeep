@@ -2,11 +2,16 @@
 
 // ignore_for_file: missing_required_param
 
+import 'dart:convert';
+
+import 'package:afropeep/models/user_models/country_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/constants.dart';
 import 'package:afropeep/screens/authentication_screens/opt_verification_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/custom_textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -17,15 +22,35 @@ class PhoneNumberScreen extends StatefulWidget {
 }
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
-  String dropdownvalue = 'CA +1';
+  Dio _dio = Dio();
+  CountryModel dropdownvalue;
   // List of items in our dropdown menu
-  var items = [
-    'CA +1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCountryCode();
+  }
+
+  List<CountryModel> getData = [];
+  List<CountryModel> arrAllCountryList = [];
+  List<CountryModel> arrCountryList = [];
+  getCountryCode()async {
+    await _dio.get(GET_COUNTRY).then((value) {
+
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+        {
+          setState(() {
+            arrAllCountryList =varJson.map((e) =>CountryModel.fromJson(e)).toList();
+            dropdownvalue = arrAllCountryList[0];
+          });
+        }
+    });
+  }
+  CountryModel _selectedValue;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +67,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
            ),
            InkWell(
                onTap: (){
+
                  Navigator.pop(context, PageTransition(type: PageTransitionType.leftToRight,));
                },
                child: Icon(Icons.arrow_back,color: ColorResources.whiteColor,)
@@ -64,6 +90,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
            ),
            Row(
              children: [
+
               Container(
                 height: 40,
                 width: MediaQuery.of(context).size.width/3.5,
@@ -72,25 +99,26 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                   borderRadius: BorderRadius.circular(29),
                   color: ColorResources.whiteColor,
                 ),
-                child:  DropdownButtonHideUnderline(
-                    child:  DropdownButton(
-                      style: TextStyle(fontSize: 14.0,color: ColorResources.blackColor ),
-                      value: dropdownvalue,
-                      icon: const Icon(Icons.arrow_drop_down_sharp,size: 34,),
-                      items: items.map((String items) {
-                        return DropdownMenuItem(
-
-                          value: items,
-                          child: Text(items,overflow: TextOverflow.ellipsis,),
-                        );
-                      }).toList(),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownvalue = newValue;
-                        });
-                      },
-                    ),),
-
+                child:DropdownButtonHideUnderline(
+                      child:  DropdownButton<CountryModel>(
+                        style: TextStyle(fontSize: 14.0,color: ColorResources.blackColor ),
+                        icon: const Icon(Icons.arrow_drop_down_sharp,size: 30,color: Colors.black,),
+                        hint: new Text("US +1"),
+                        borderRadius: BorderRadius.circular(10),
+                        isDense: true,
+                        value: dropdownvalue,
+                        items: arrAllCountryList.map((CountryModel value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text("${value.countryShortname}  +${value.countryCode}",overflow: TextOverflow.ellipsis,),
+                          );
+                        }).toList(),
+                        onChanged: (CountryModel newValue) {
+                          setState(() {
+                            dropdownvalue = newValue;
+                          });
+                        },
+                      ),)
               ),
                const SizedBox(
                  width: 7,
@@ -114,8 +142,17 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                child: CustomButton(
                  height: 45,
                  backgroundColor: ColorResources.blackColor,
-                 onPressed: (){
-                   Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                 onPressed: ()async{
+                   // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                   Map<String, String> params = Map();
+                   params['mobile_number'] = _phoneNumberController.text.toString();
+                   params['country_id'] = dropdownvalue.countryId.toString();
+                   await _dio.post(ADD_USER,data:jsonEncode(params)).then((value) {
+                     if(value.statusCode == 200)
+                     {
+                       Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                     }
+                   });
                  },
                  buttonText: 'Next',
                  fontSize: 16.0,
