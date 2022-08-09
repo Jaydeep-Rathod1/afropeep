@@ -1,10 +1,17 @@
 
+import 'package:afropeep/models/user_models/questions_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/constants.dart';
 import 'package:afropeep/screens/survey/congratulation_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:afropeep/widgets/custom_textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// String questionTen ;
 class QuestionsScreen extends StatefulWidget {
   @override
   State<QuestionsScreen> createState() => _QuestionsScreenState();
@@ -19,9 +26,47 @@ String questionSevenValue ;
 String questionEightValue ;
 String questionNineValue ;
 String questionTenValue ;
+String questioneElevanValue ;
+String questionTwaleValue ;
+String questionThreeteenValue ;
+TextEditingController _questionOneAnswer = TextEditingController() ;
+TextEditingController _questionTwoAnswer = TextEditingController() ;
+TextEditingController _questionThreeAnswer = TextEditingController() ;
+TextEditingController _questionFourAnswer = TextEditingController() ;
+TextEditingController _questionFiveAnswer = TextEditingController() ;
+TextEditingController _questionSixAnswer = TextEditingController() ;
+TextEditingController _questionSevenAnswer = TextEditingController() ;
+TextEditingController _questionEightAnswer = TextEditingController() ;
+TextEditingController _questionNineAnswer = TextEditingController() ;
+TextEditingController _questionTenAnswer = TextEditingController() ;
+TextEditingController _questionElevanAnswer = TextEditingController() ;
+TextEditingController _questionTwaleAnswer = TextEditingController() ;
+TextEditingController _questionThrteenAnswer = TextEditingController() ;
+List<QuestionsModel> arrAllQuestionsList = [];
 var index = 1;
+PageController _pageController = PageController();
+Dio _dio = Dio();
 class _QuestionsScreenState extends State<QuestionsScreen> {
-  PageController _pageController = PageController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getQuestionsList();
+  }
+  getQuestionsList()async {
+    await _dio.get(GET_QUESTIONS).then((value) {
+
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrAllQuestionsList =varJson.map((e) =>QuestionsModel.fromJson(e)).toList();
+        });
+        print(arrAllQuestionsList);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +104,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 ),
                 Expanded(child: Align(
                   alignment: Alignment.center,
-                  child: CustomText(text:'${index<10 ? '${0}${index}':index}/10',fontSize: 14,color: ColorResources.whiteColor,),
+                  child: CustomText(text:'${index<10 ? '${0}${index}':index}/13',fontSize: 14,color: ColorResources.whiteColor,),
                 ))
               ],
             )
@@ -85,46 +130,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   QuestionEight(),
                   QuestionNine(),
                   QuestionTen(),
+                  QuestionElevan(),
+                  QuestionTwale(),
+                  QuestionThreteen()
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20,right: 20),
-            child:  Align(
-                alignment: FractionalOffset.bottomRight,
-                child: CustomButton(
-                  height: 45,
-                  backgroundColor: ColorResources.blackColor,
-                  onPressed: (){
-                    // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-
-                    if(index < 10)
-                    {
-                      setState(() {
-                        index++;
-                      });
-                      _pageController.animateToPage(_pageController.page.toInt() + 1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeIn
-                      );
-
-                    }
-                    else{
-                      print("called");
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                    }
-                  },
-                  buttonText: index ==10 ? "Finish":'Next',
-                  fontSize: 16.0,
-                  textColor: ColorResources.whiteColor,
-                  width:MediaQuery.of(context).size.width/3.8,
-                )
-            ),
-          ),
-          const SizedBox(
-            height: 34,
-          )
         ],
       ),
     );
@@ -140,109 +152,65 @@ class QuestionOne extends StatefulWidget {
 class _QuestionOneState extends State<QuestionOne> {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return arrAllQuestionsList!= null && arrAllQuestionsList.length != 0? Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[0].qName!= null ? arrAllQuestionsList[0].qName:'',fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionOneValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionOneValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionOneAnswer,
+              hintText: 'Enter Bio',
+              maxLines: 5,
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionOneValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionOneValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionOneValue = _questionOneAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionOneValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionOneValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionOneValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionOneValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
-    );
+    ):Container();
   }
 }
-
-
 class QuestionTwo extends StatefulWidget {
   @override
   State<QuestionTwo> createState() => _QuestionTwoState();
@@ -255,99 +223,56 @@ class _QuestionTwoState extends State<QuestionTwo> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[1].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTwoValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionTwoValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionTwoAnswer,
+              hintText: 'Enter Nationality',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTwoValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionTwoValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionTwoValue = _questionTwoAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTwoValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionTwoValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTwoValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionTwoValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -355,8 +280,6 @@ class _QuestionTwoState extends State<QuestionTwo> {
 
 
 class QuestionThree extends StatefulWidget {
-
-
   @override
   State<QuestionThree> createState() => _QuestionThreeState();
 }
@@ -368,99 +291,55 @@ class _QuestionThreeState extends State<QuestionThree> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[2].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionThreeValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionThreeValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionThreeAnswer,
+              hintText: 'Enter Religion',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionThreeValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionThreeValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionThreeValue = _questionThreeAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionThreeValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionThreeValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionThreeValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionThreeValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -479,99 +358,56 @@ class _QuestionFourState extends State<QuestionFour> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[3].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFourValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionFourValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionFourAnswer,
+              hintText: 'Enter Occupation Name',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFourValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionFourValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionFourValue = _questionFourAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFourValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionFourValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFourValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionFourValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -589,99 +425,56 @@ class _QuestionFiveState extends State<QuestionFive> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[4].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFiveValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionFiveValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionFiveAnswer,
+              hintText: 'Enter Sign',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFiveValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionFiveValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionFiveValue = _questionFiveAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFiveValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionFiveValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionFiveValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionFiveValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -700,99 +493,55 @@ class _QuestionSixState extends State<QuestionSix> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[5].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSixValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionSixValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionSixAnswer,
+              hintText: 'Enter Tribe',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSixValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionSixValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionSixValue = _questionSixAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSixValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionSixValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSixValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionSixValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -810,13 +559,24 @@ class _QuestionSevenState extends State<QuestionSeven> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[6].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
+        /*Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionTwoAnswer,
+              hintText: 'Enter Relationship Status',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
+          ),
+        ),*/
+
         GestureDetector(
           onTap: (){
             setState(() {
               // isSelected = !isSelected;
-              questionSevenValue = "Beaches";
+              questionSevenValue = "Single";
             });
           },
           child: Container(
@@ -829,8 +589,8 @@ class _QuestionSevenState extends State<QuestionSeven> {
                   borderRadius: BorderRadius.circular(8)
               ),
               child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionSevenValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                title: const Text('Single'),
+                trailing: questionSevenValue == 'Single'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
               )
           ),
         ),
@@ -839,7 +599,7 @@ class _QuestionSevenState extends State<QuestionSeven> {
           onTap: (){
             setState(() {
               // isSelected = !isSelected;
-              questionSevenValue = "Hills";
+              questionSevenValue = "Married";
             });
           },
           child: Container(
@@ -852,57 +612,50 @@ class _QuestionSevenState extends State<QuestionSeven> {
                   borderRadius: BorderRadius.circular(8)
               ),
               child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionSevenValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                title: const Text('Married'),
+                trailing: questionSevenValue == "Married"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
               )
           ),
         ),
         const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSevenValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionSevenValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  // setState(() {
+                  //   questionSevenValue = questionSevenValue;
+                  // });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionSevenValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionSevenValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -920,99 +673,56 @@ class _QuestionEightState extends State<QuestionEight> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[7].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionEightValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionEightValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionEightAnswer,
+              hintText: 'Enter Height',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionEightValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionEightValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionEightValue = _questionEightAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionEightValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionEightValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionEightValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionEightValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -1030,99 +740,56 @@ class _QuestionNineState extends State<QuestionNine> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[8].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionNineValue = "Beaches";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionNineValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionNineAnswer,
+              hintText: 'Enter Number of Childern',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
           ),
         ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionNineValue = "Hills";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionNineValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionNineValue = _questionNineAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionNineValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionNineValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionNineValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionNineValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
@@ -1142,13 +809,13 @@ class _QuestionTenState extends State<QuestionTen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: 'Where would you most like  to visit?',fontSize: 22,color: ColorResources.whiteColor,),
+        CustomText(text: arrAllQuestionsList[9].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
         GestureDetector(
           onTap: (){
             setState(() {
               // isSelected = !isSelected;
-              questionTenValue = "Beaches";
+              questionTenValue = "Yes";
             });
           },
           child: Container(
@@ -1161,8 +828,8 @@ class _QuestionTenState extends State<QuestionTen> {
                   borderRadius: BorderRadius.circular(8)
               ),
               child: ListTile(
-                title: const Text('Beaches'),
-                trailing: questionTenValue == 'Beaches'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                title: const Text('Yes'),
+                trailing: questionTenValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
               )
           ),
         ),
@@ -1171,7 +838,7 @@ class _QuestionTenState extends State<QuestionTen> {
           onTap: (){
             setState(() {
               // isSelected = !isSelected;
-              questionTenValue = "Hills";
+              questionTenValue = "No";
             });
           },
           child: Container(
@@ -1184,59 +851,350 @@ class _QuestionTenState extends State<QuestionTen> {
                   borderRadius: BorderRadius.circular(8)
               ),
               child: ListTile(
-                title: const Text('Hills'),
-                trailing: questionTenValue == "Hills"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                title: const Text('No'),
+                trailing: questionTenValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
               )
           ),
         ),
         const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTenValue = "Deserts";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Deserts'),
-                trailing: questionTenValue == 'Deserts'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionNineValue = _questionNineAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
               )
           ),
-        ),
-        const SizedBox(height: 14.0,),
-        GestureDetector(
-          onTap: (){
-            setState(() {
-              // isSelected = !isSelected;
-              questionTenValue = "Aboveall";
-            });
-          },
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 61,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.only(left:30),
-              decoration: BoxDecoration(
-                  color: ColorResources.whiteColor,
-                  borderRadius: BorderRadius.circular(8)
-              ),
-              child: ListTile(
-                title: const Text('Above all'),
-                trailing: questionTenValue == 'Aboveall'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
-              )
-          ),
-        ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
       ],
     );
   }
 }
+
+
+
+class QuestionElevan extends StatefulWidget {
+  const QuestionElevan({Key key}) : super(key: key);
+
+  @override
+  State<QuestionElevan> createState() => _QuestionElevanState();
+}
+
+class _QuestionElevanState extends State<QuestionElevan> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(text: arrAllQuestionsList[10].qName,fontSize: 22,color: ColorResources.whiteColor,),
+        const SizedBox(height: 30.0,),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              // isSelected = !isSelected;
+              questioneElevanValue = "Yes";
+            });
+          },
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 61,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(left:30),
+              decoration: BoxDecoration(
+                  color: ColorResources.whiteColor,
+                  borderRadius: BorderRadius.circular(8)
+              ),
+              child: ListTile(
+                title: const Text('Yes'),
+                trailing: questioneElevanValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+              )
+          ),
+        ),
+        const SizedBox(height: 14.0,),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              // isSelected = !isSelected;
+              questioneElevanValue = "No";
+            });
+          },
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 61,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(left:30),
+              decoration: BoxDecoration(
+                  color: ColorResources.whiteColor,
+                  borderRadius: BorderRadius.circular(8)
+              ),
+              child: ListTile(
+                title: const Text('No'),
+                trailing: questioneElevanValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+              )
+          ),
+        ),
+
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionNineValue = _questionNineAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
+              )
+          ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
+      ],
+    );
+  }
+}
+
+class QuestionTwale extends StatefulWidget {
+  
+
+  @override
+  State<QuestionTwale> createState() => _QuestionTwaleState();
+}
+
+class _QuestionTwaleState extends State<QuestionTwale> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(text: arrAllQuestionsList[11].qName,fontSize: 22,color: ColorResources.whiteColor,),
+        const SizedBox(height: 30.0,),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              // isSelected = !isSelected;
+              questionTwaleValue = "Yes";
+            });
+          },
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 61,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(left:30),
+              decoration: BoxDecoration(
+                  color: ColorResources.whiteColor,
+                  borderRadius: BorderRadius.circular(8)
+              ),
+              child: ListTile(
+                title: const Text('Yes'),
+                trailing: questionTwaleValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+              )
+          ),
+        ),
+        const SizedBox(height: 14.0,),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              // isSelected = !isSelected;
+              questionTwaleValue = "No";
+            });
+          },
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 61,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.only(left:30),
+              decoration: BoxDecoration(
+                  color: ColorResources.whiteColor,
+                  borderRadius: BorderRadius.circular(8)
+              ),
+              child: ListTile(
+                title: const Text('No'),
+                trailing: questionTwaleValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+              )
+          ),
+        ),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: (){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionNineValue = _questionNineAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+                    print("called");
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
+              )
+          ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
+      ],
+    );
+  }
+}
+
+class QuestionThreteen extends StatefulWidget {
+
+  @override
+  State<QuestionThreteen> createState() => _QuestionThreteenState();
+}
+
+class _QuestionThreteenState extends State<QuestionThreteen> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(text: arrAllQuestionsList[12].qName,fontSize: 22,color: ColorResources.whiteColor,),
+        const SizedBox(height: 30.0,),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: CustomTextField(
+              controller: _questionThrteenAnswer,
+              hintText: 'Enter Languages',
+              fontSize: 14.0,
+              textInputType: TextInputType.multiline,
+              borderRadius: 29
+          ),
+        ),
+        Expanded(child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20),
+          child:  Align(
+              alignment: FractionalOffset.bottomRight,
+              child: CustomButton(
+                height: 45,
+                backgroundColor: ColorResources.blackColor,
+                onPressed: ()async{
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                  setState(() {
+                    questionThreeteenValue = _questionThrteenAnswer.text.toString();
+                  });
+                  if(index < 13)
+                  {
+                    setState(() {
+                      index++;
+                    });
+                    _pageController.animateToPage(_pageController.page.toInt() + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeIn
+                    );
+
+                  }
+                  else{
+
+/*
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    var userid = prefs.getInt('userid');
+                    Map<String, String> params = Map();
+                    params['user_id'] = userid.toString();
+
+                    print(params);
+                    await _dio.post(SEND_OTP_REQUEST,data: params).then((value) {
+                      // var varJson = value.data;
+                      print("value = ${value}");
+                      if(value.statusCode == 200)
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                      }
+                    });*/
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                  }
+                },
+                buttonText: index ==13 ? "Finish":'Next',
+                fontSize: 16.0,
+                textColor: ColorResources.whiteColor,
+                width:MediaQuery.of(context).size.width/3.8,
+              )
+          ),
+        ),),
+        const SizedBox(
+          height: 34,
+        )
+      ],
+    );
+  }
+}
+
+
+
+
 

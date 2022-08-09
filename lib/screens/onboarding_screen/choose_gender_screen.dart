@@ -1,4 +1,5 @@
 
+import 'package:afropeep/models/user_models/modetostart_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/onboarding_screen/name_details_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
@@ -7,13 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ChooseGenderScreen extends StatefulWidget {
-
+  ModeToStartModel chooseToStart;
+  ChooseGenderScreen({this.chooseToStart});
   @override
   State<ChooseGenderScreen> createState() => _ChooseGenderScreenState();
 }
 
 class _ChooseGenderScreenState extends State<ChooseGenderScreen> {
   String value ;
+  bool isValidateGender = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +40,7 @@ class _ChooseGenderScreenState extends State<ChooseGenderScreen> {
               height: 32.0,
             ),
             CustomText(text: 'What is your gender?',fontSize: 22,color: ColorResources.whiteColor,),
-            SizedBox(height: 88.0,),
+            SizedBox(height: 78.0,),
             Column(
               children: [
                 Row(
@@ -46,6 +49,11 @@ class _ChooseGenderScreenState extends State<ChooseGenderScreen> {
                   children: [
                     Column(
                       children: [
+                        isValidateGender == true ?
+                        Container(
+                          padding: EdgeInsets.only(left: 2.0),
+                          child: CustomText(text: 'Please Choose Gender',color: Colors.white,fontSize: 11,),):Container(),
+                        SizedBox(height: 10,),
                         GestureDetector(
                           onTap: (){
                             setState(() {
@@ -121,7 +129,8 @@ class _ChooseGenderScreenState extends State<ChooseGenderScreen> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                CustomText(text: 'Other',fontSize: 14,color: ColorResources.whiteColor,)
+                CustomText(text: 'Other',fontSize: 14,color: ColorResources.whiteColor,),
+
               ],
             ),
             Expanded(
@@ -132,7 +141,19 @@ class _ChooseGenderScreenState extends State<ChooseGenderScreen> {
                     backgroundColor: ColorResources.blackColor,
                     onPressed: (){
                       // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> NameDetailsScreen()));
-                      Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: NameDetailsScreen()));
+                      // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: NameDetailsScreen(chooseToStart:widget.chooseToStart,chooseGender:value,)));
+                      if(value != null)
+                      {
+                        setState(() {
+                          isValidateGender = false;
+                        });
+                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: NameDetailsScreen(chooseToStart:widget.chooseToStart,chooseGender:value,)));
+                      }
+                      else{
+                        setState(() {
+                          isValidateGender = true;
+                        });
+                      }
                     },
                     buttonText: 'Next',
                     fontSize: 16.0,

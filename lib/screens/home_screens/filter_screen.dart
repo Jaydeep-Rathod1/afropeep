@@ -1,6 +1,9 @@
+import 'package:afropeep/models/user_models/user_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/constants.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class FilterScreen extends StatefulWidget {
@@ -9,6 +12,7 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
+  Dio _dio = Dio();
   String value;
   static const min = 18.0;
   static const max = 26.0;
@@ -263,12 +267,27 @@ class _FilterScreenState extends State<FilterScreen> {
                 fontSize: 16,
                 width: MediaQuery.of(context).size.width,
                 backgroundColor: ColorResources.blackColor,
-                onPressed: (){},
+                onPressed: (){
+                  getFilteredUser();
+                },
                 buttonText: 'Apply',
               ),
             ),
           ),
         )
     );
+  }
+  List<UserModel> arrAllCountryList= [];
+  getFilteredUser()async {
+    await _dio.get(FILTER_USER).then((value) {
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrAllCountryList =varJson.map((e) =>UserModel.fromJson(e)).toList();
+        });
+      }
+    });
   }
 }

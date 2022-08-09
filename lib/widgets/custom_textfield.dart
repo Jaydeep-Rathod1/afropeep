@@ -15,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   Function onPressed;
   Color iconColor;
   int maxLines;
+  String errorText;
+
   CustomTextField({
     Key key,
     this.controller,
@@ -32,7 +34,7 @@ class CustomTextField extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return   TextField(
+    return   TextFormField(
       onTap: onPressed,
       style: TextStyle(fontSize: fontSize, ),
         controller: controller,
@@ -64,6 +66,8 @@ class CustomTextField extends StatelessWidget {
                 width: 1,
               )
           ),
+          // errorText: "Error Text",
+
         ),
 
     );

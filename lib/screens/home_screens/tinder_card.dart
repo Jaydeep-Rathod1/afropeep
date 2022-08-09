@@ -1,3 +1,4 @@
+import 'package:afropeep/models/user_models/user_model.dart';
 import 'package:afropeep/provider/card_provider.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/match_screens/its_match_screen.dart';
@@ -6,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "dart:math" show pi;
 class TinderCard extends StatefulWidget {
-  final String imageUrl;
-  final bool isFront;
-  const TinderCard({Key key, this.imageUrl,this.isFront}) : super(key: key);
+  var imageUrl;
+  bool isFront;
+  UserModel userData;
+  TinderCard({Key key, this.imageUrl,this.isFront,this.userData}) : super(key: key);
 
   @override
   State<TinderCard> createState() => _TinderCardState();
@@ -29,14 +31,13 @@ class _TinderCardState extends State<TinderCard> {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: widget.isFront? buildForntCard():buildCard(),
+      // child: widget.isFront? Text("called build card fornt"):Text("called build main")
     );
   }
   Widget buildForntCard(){
-
     return GestureDetector(
       child: LayoutBuilder(
         builder: (context,constraints){
-
           final provider = Provider.of<CardProvider>(context,listen: true);
           final position = provider.position;
           final milliseconds =provider.isDragging ? 0 :100;
@@ -46,17 +47,14 @@ class _TinderCardState extends State<TinderCard> {
             ..translate(center.dx,center.dy)
             ..rotateZ(angle)
             ..translate(-center.dx,-center.dy);
-
           return AnimatedContainer(
-              duration: Duration(
-                  milliseconds:milliseconds,
-
-              ),
+            duration: Duration(
+              milliseconds:milliseconds,
+            ),
             transform: rotatedMatrix..translate(position.dx,position.dy),
             curve: Curves.easeInOut,
             child: buildCard(),
           );
-
         },
       ),
       onPanStart: (details){
@@ -102,19 +100,19 @@ class _TinderCardState extends State<TinderCard> {
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-            image: AssetImage(widget.imageUrl),
-            fit: BoxFit.cover,
-            alignment: Alignment(-0.3,0)
-            )
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                  // image: AssetImage(widget.imageUrl),
+                    image: AssetImage('assets/images/user_1.png'),
+                    fit: BoxFit.cover,
+                    alignment: Alignment(-0.3,0)
+                )
+            ),
           ),
-          ),
-
         ),
         Positioned(
             top: MediaQuery.of(context).size.height/5,
-            right: 20.0,
+            left: 20.0,
             child: Column(
               children: [
                 GestureDetector(
@@ -204,7 +202,7 @@ class _TinderCardState extends State<TinderCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  CustomText(text: 'Scarlett Johansson, 24',fontSize: 18.0,color: ColorResources.whiteColor,),
+                  CustomText(text:widget.userData.lastname != null && widget.userData.lastname.isNotEmpty ?widget.userData.lastname: "User${widget.userData.userId}",fontSize: 18.0,color: ColorResources.whiteColor,),
                   SizedBox(height: 5.0,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,8 +216,13 @@ class _TinderCardState extends State<TinderCard> {
                 ],
               ),
             )
-        )
+        ),
+
       ],
     );
   }
 }
+
+
+
+

@@ -1,13 +1,16 @@
 
 
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/constants.dart';
 import 'package:afropeep/screens/onboarding_screen/choose_mode_to_start_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/custom_textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({Key key}) : super(key: key);
@@ -17,6 +20,13 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
+  Dio _dio = Dio();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +74,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       borderRadius: 29
                     ),
                   ),
-
+              SizedBox(height: 5,),
+              validOtpEmpty ?Container(
+                padding: EdgeInsets.only(left: 8.0),
+                child: CustomText(text: 'Please Enter OTP',color: Colors.white,fontSize: 11,),):Container(),
+              validOtp ?Container(
+                padding: EdgeInsets.only(left: 8.0),
+                child: CustomText(text: 'Please Enter Valid OTP',color: Colors.white,fontSize: 11,),):Container(),
 
               Expanded(
                 child: Align(
@@ -73,7 +89,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       height: 45,
                       backgroundColor: ColorResources.blackColor,
                       onPressed: (){
-                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+                        _isValidate();
+                        otpVerification();
 
                       },
                       buttonText: 'Verify',
@@ -90,5 +107,38 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           ),
         )
     );
+  }
+  bool validOtp= false;
+  bool validOtpTime= false;
+  bool validOtpEmpty= false;
+  bool isvalidateAll = false;
+  _isValidate(){
+    setState(() {
+      _otpController.text.isEmpty ?validOtpEmpty = true : validOtpEmpty = false;
+      (_otpController.text.isNotEmpty && _otpController.text.toString() !="123") ? validOtp = true : validOtp = false;
+      // ()?validOtpTime = true:validOtpTime=false;
+      // dropdownvalue.countryId == null ? validOtpEmpty = true:validOtpEmpty=false;
+    });
+
+  }
+  otpVerification()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    int userid = prefs.getInt('userid');
+    Map<String, String> params = Map();
+    params['user_id'] = userid.toString();
+    params['otp'] = _otpController.text.toString();
+    print(params);
+    await _dio.post(VERIFY_OTP,data: params).then((value) {
+      // var varJson = value.data;
+      print("value = ${value.data["message"]}");
+      if(value.statusCode == 200)
+      {
+        
+        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+        // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+      }
+    });
+
   }
 }

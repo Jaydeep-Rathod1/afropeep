@@ -1,16 +1,22 @@
+import 'package:afropeep/models/user_models/user_model.dart';
+import 'package:afropeep/resouces/constants.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 enum CardStatus{ like ,dislike,superlike}
 
 class CardProvider extends ChangeNotifier{
+  Dio _dio = Dio();
   List<String> _urlImages = [];
+  List<UserModel> _urlAllList = [];
   bool _isDragging = false;
   Offset _position = Offset.zero;
   Size _screenSize = Size.zero;
   double _angle = 0;
 
   List<String> get urlImages => _urlImages;
+  List<UserModel> get userAll => _urlAllList;
   Offset get position => _position;
   bool get isDragging => _isDragging;
   double get angle => _angle;
@@ -97,30 +103,42 @@ class CardProvider extends ChangeNotifier{
   }
   void superlike(){
     _angle = 0;
-    _position -= Offset(_screenSize.height/2,0);
+    _position -= Offset(_screenSize.height/0,1);
     _nextCard();
     notifyListeners();
   }
   Future _nextCard() async{
-    if(_urlImages.isEmpty) return;
+    if(_urlAllList.isEmpty) return;
     await Future.delayed(Duration(milliseconds: 200));
-    _urlImages.removeLast();
+    _urlAllList.removeLast();
     resetPosition();
   }
+  getCardImages()async{
+    await _dio.get(ALL_USER).then((value) {
+      var varJson = value.data as List;
+      print("All Length = ${varJson.length}");
+      if(value.statusCode == 200)
+      {
+          _urlAllList =varJson.map((e) =>UserModel.fromJson(e)).toList();
+          notifyListeners();
+      }
 
+    });
+  }
   void resetUsers(){
-    _urlImages = <String>[
-      'assets/images/user_1.png',
-      'assets/images/myprofile.png',
-      'assets/images/user_1.png',
-      'assets/images/myprofile.png',
-      'assets/images/user_1.png',
-      'assets/images/myprofile.png',
-      'assets/images/user_1.png',
-      'assets/images/myprofile.png',
-      'assets/images/user_1.png',
-
-    ].reversed.toList();
+    getCardImages();
+    // _urlAllList = [];
+    // _urlImages = [
+    //   'assets/images/user_1.png',
+    //   'assets/images/myprofile.png',
+    //   'assets/images/user_1.png',
+    //   'assets/images/myprofile.png',
+    //   'assets/images/user_1.png',
+    //   'assets/images/myprofile.png',
+    //   'assets/images/user_1.png',
+    //   'assets/images/myprofile.png',
+    //   'assets/images/user_1.png',
+    // ].toList();
     notifyListeners();
   }
 }

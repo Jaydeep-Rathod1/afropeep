@@ -1,10 +1,15 @@
 
+import 'package:afropeep/models/user_models/interestes_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/facial_recognition_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/constants.dart';
 
 class ChooseInterestesScreen extends StatefulWidget {
 
@@ -13,48 +18,46 @@ class ChooseInterestesScreen extends StatefulWidget {
 }
 
 class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
-  List<String> reportList = [
-    "Cooking",
-    "Health care",
-    "Tracking",
-    "Outdoor activites",
-    "Riding",
-    "Yoga",
-    "Dancing",
-    "Sports",
-    "Video Games",
-    "Movies",
-    "Gardening",
-    "Crafts",
-    "Gym"
-  ];
-  List<String> selectedReportList = [];
-   Function(List<String>) onSelectionChanged;
-   Function(List<String>) onMaxSelected;
-   int maxSelection;
-  List<String> selectedChoices = [];
+
+  // List<String> selectedReportList = [];
+  int maxSelection;
+  List<InterestModel> selectedChoices = [];
+  List<InterestModel> arrAllChoices = [];
+  Dio _dio = Dio();
+  getChoiceData()async {
+    await _dio.get(GET_INTERSET).then((value) {
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrAllChoices =varJson.map((e) =>InterestModel.fromJson(e)).toList();
+        });
+      }
+    });
+  }
   _buildChoiceList() {
     List<Widget> choices = [];
 
-   reportList.forEach((item) {
+    arrAllChoices.forEach((InterestModel item) {
       choices.add(
           Container(
             height: 41,
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
           backgroundColor: ColorResources.whiteColor,
-          label: Text(item,style: TextStyle(color: selectedChoices.contains(item)?ColorResources.whiteColor:ColorResources.blackColor),),
+          label: Text(item.intrestName,style: TextStyle(color: selectedChoices.contains(item)?ColorResources.whiteColor:ColorResources.blackColor),),
           selected: selectedChoices.contains(item),
           selectedColor: ColorResources.blackColor,
           onSelected: (selected) {
             if(selectedChoices.length == (maxSelection  ?? -1) && !selectedChoices.contains(item)) {
-              onMaxSelected?.call(selectedChoices);
+              // onMaxSelected?.call(selectedChoices);
             } else {
               setState(() {
                 selectedChoices.contains(item)
                     ? selectedChoices.remove(item)
                     : selectedChoices.add(item);
-                onSelectionChanged?.call(selectedChoices);
+                // onSelectionChanged?.call(selectedChoices);
               });
             }
           },
@@ -63,7 +66,12 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
     });
     return choices;
   }
-
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getChoiceData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +101,14 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomText(text: 'Choose at least 6 ',fontSize: 14,color: ColorResources.whiteColor,),
-                CustomText(text: '01/05',fontSize: 14,color: ColorResources.whiteColor,),
+                CustomText(text: '0${selectedChoices.length}/0${arrAllChoices.length}',fontSize: 14,color: ColorResources.whiteColor,),
               ],
             ),
             SizedBox(height: 23,),
             Wrap(
               children: _buildChoiceList(),
             ),
+            SizedBox(height: 5,),
             Expanded(
               child: Align(
                   alignment: FractionalOffset.bottomCenter,
@@ -108,7 +117,8 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
                     backgroundColor: ColorResources.blackColor,
                     onPressed: (){
                       // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseDateScreen()));
-                      Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen()));
+                      // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen()));
+                      updateUserData();
                     },
                     buttonText: 'Next',
                     fontSize: 16.0,
@@ -143,5 +153,35 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
         ),
       ),
     );
+  }
+  var isvalidChoicesNumber = false;
+  updateUserData() async{
+    List<String> selectedChoicesName =[];
+    selectedChoices.forEach((element) {
+      selectedChoicesName.add(element.intrestName);
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userid = prefs.getInt('userid');
+    Map<String, String> params = Map();
+    params['user_id'] = userid.toString();
+    params['intrest'] = selectedChoicesName.toString();
+    print(selectedChoices);
+    print(params);
+    if(selectedChoicesName.length >= 6)
+      {
+        await _dio.post(UPDATE_USER,data: params).then((value) {
+          print("value = ${value}");
+          if(value.statusCode == 200)
+          {
+            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen()));
+          }
+        });
+      }
+    else{
+      setState(() {
+        selectedChoicesName.length <= 6? isvalidChoicesNumber = true : isvalidChoicesNumber = false;
+      });
+    }
+
   }
 }

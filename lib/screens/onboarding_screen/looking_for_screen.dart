@@ -3,8 +3,12 @@ import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/survey/take_survey_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/constants.dart';
 
 class LookingForScreen extends StatefulWidget {
 
@@ -14,6 +18,7 @@ class LookingForScreen extends StatefulWidget {
 
 class _LookingForScreenState extends State<LookingForScreen> {
   String value ;
+  Dio _dio = Dio();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +137,7 @@ class _LookingForScreenState extends State<LookingForScreen> {
                       height: 45,
                       backgroundColor: ColorResources.blackColor,
                       onPressed: (){
-                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  TakeSurveyScreen()));
+                        updateUserData();
                       },
                       buttonText: 'Next',
                       fontSize: 16.0,
@@ -273,5 +278,22 @@ class _LookingForScreenState extends State<LookingForScreen> {
         ],
       ),
     );*/
+  }
+  updateUserData() async{
+    List<String> selectedChoicesName =[];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userid = prefs.getInt('userid');
+    Map<String, String> params = Map();
+    params['user_id'] = userid.toString();
+    params['looking_for'] = value;
+
+    print(params);
+    await _dio.post(UPDATE_USER,data: params).then((value) {
+      print("value = ${value}");
+      if(value.statusCode == 200)
+      {
+        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  TakeSurveyScreen()));
+      }
+    });
   }
 }
