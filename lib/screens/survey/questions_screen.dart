@@ -184,29 +184,27 @@ class _QuestionOneState extends State<QuestionOne> {
                       questionID = arrAllQuestionsList[0].qId.toString();
                       questionValue = _questionOneAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
+                    await insertQuestionAnswer(questionID,questionValue,userid);
+                    if(index < 13)
+                    {
+                      setState(() {
+                        isValidQuestion = false;
+                        isValidMessage = "";
+                        questionID = "";
+                        questionValue = "";
+                        index++;
+                      });
+                      _pageController.animateToPage(_pageController.page.toInt() + 1,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeIn
+                      );
 
 
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-                    });
-
+                    }
+                    else{
+                      print("called");
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+                    }
                   }
                   else{
                     setState(() {
@@ -362,7 +360,7 @@ class _QuestionThreeState extends State<QuestionThree> {
                       questionID = arrAllQuestionsList[2].qId.toString();
                       questionValue = _questionThreeAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -383,7 +381,7 @@ class _QuestionThreeState extends State<QuestionThree> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -453,7 +451,7 @@ class _QuestionFourState extends State<QuestionFour> {
                       questionID = arrAllQuestionsList[3].qId.toString();
                       questionValue = _questionFourAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -474,7 +472,7 @@ class _QuestionFourState extends State<QuestionFour> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -543,7 +541,7 @@ class _QuestionFiveState extends State<QuestionFive> {
                       questionID = arrAllQuestionsList[4].qId.toString();
                       questionValue = _questionFiveAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -562,7 +560,7 @@ class _QuestionFiveState extends State<QuestionFive> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
                   }
                   else{
                     setState(() {
@@ -764,7 +762,7 @@ class _QuestionSevenState extends State<QuestionSeven> {
                       questionID = arrAllQuestionsList[6].qId.toString();
                       questionValue = questionSevenValue;
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -785,7 +783,7 @@ class _QuestionSevenState extends State<QuestionSeven> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -854,7 +852,7 @@ class _QuestionEightState extends State<QuestionEight> {
                       questionID = arrAllQuestionsList[7].qId.toString();
                       questionValue = _questionEightAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -873,7 +871,7 @@ class _QuestionEightState extends State<QuestionEight> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -941,7 +939,7 @@ class _QuestionNineState extends State<QuestionNine> {
                       questionID = arrAllQuestionsList[8].qId.toString();
                       questionValue = _questionNineAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -962,7 +960,7 @@ class _QuestionNineState extends State<QuestionNine> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -1070,7 +1068,7 @@ class _QuestionTenState extends State<QuestionTen> {
                       questionID = arrAllQuestionsList[9].qId.toString();
                       questionValue = _questionSixAnswer.text.toString();
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -1089,7 +1087,7 @@ class _QuestionTenState extends State<QuestionTen> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -1189,7 +1187,7 @@ class _QuestionElevanState extends State<QuestionElevan> {
               child: CustomButton(
                 height: 45,
                 backgroundColor: ColorResources.blackColor,
-                onPressed: (){
+                onPressed: ()async{
                   // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
                   if(questioneElevanValue != '')
                   {
@@ -1197,7 +1195,7 @@ class _QuestionElevanState extends State<QuestionElevan> {
                       questionID = arrAllQuestionsList[10].qId.toString();
                       questionValue = _questionSixAnswer.text.toString();
                     });
-                    insertQuestionAnswer(questionID,questionValue,userid);
+                    await insertQuestionAnswer(questionID,questionValue,userid);
                     if(index < 13)
                     {
                       setState(() {
@@ -1322,7 +1320,7 @@ class _QuestionTwaleState extends State<QuestionTwale> {
                       questionID = arrAllQuestionsList[11].qId.toString();
                       questionValue = questionTwaleValue;
                     });
-                    await insertQuestionAnswer(questionID,questionValue,userid).then((value){
+                  await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
                       {
                         setState(() {
@@ -1343,7 +1341,7 @@ class _QuestionTwaleState extends State<QuestionTwale> {
                         print("called");
                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
                       }
-                    });
+
 
                   }
                   else{
@@ -1412,7 +1410,7 @@ class _QuestionThreteenState extends State<QuestionThreteen> {
                       questionID = arrAllQuestionsList[12].qId.toString();
                       questionValue = _questionThrteenAnswer.text.toString();
                     });
-                    insertQuestionAnswer(questionID,questionValue,userid);
+                    await insertQuestionAnswer(questionID,questionValue,userid);
                     if(index < 13)
                     {
                       setState(() {

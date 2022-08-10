@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           //   bodyText2: TextStyle(fontSize: 18.0, fontFamily: 'Hind'),
           // )
         ),
-        home:  HomeScreen(),
+        home:  QuestionsScreen(),
       ),
     );
   }
