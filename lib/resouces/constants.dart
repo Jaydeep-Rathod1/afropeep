@@ -1,6 +1,7 @@
 const BASE_URL ="https://dazzling-gates.62-151-182-243.plesk.page/api/";
 const GET_COUNTRY = BASE_URL+"country";
 const GET_INTERSET = BASE_URL + "interest";
+const ADD_QUESTION = BASE_URL+"addanswer";
 const ADD_USER = BASE_URL+"adduser";
 const UPDATE_USER = BASE_URL+"updateuser";
 const ALL_USER = BASE_URL+"alluser";
