@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "418549472561",
+    "project_id": "afropeep",
+    "storage_bucket": "afropeep.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418549472561:android:1126353f998a1f56976410",
+        "android_client_info": {
+          "package_name": "com.example.afropeep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418549472561-oc61lgldghllk5kik0ucc5puvog38gd8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.afropeep",
+            "certificate_hash": "5194f9163e8e7d5d521cc6c2a1917d4b4674b905"
+          }
+        },
+        {
+          "client_id": "418549472561-qpingtu3fk9456p8e614mvthbd5c62f4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrxA5AHO8QvA8WiemW-fUtcu-jnlFyqAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418549472561-qpingtu3fk9456p8e614mvthbd5c62f4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

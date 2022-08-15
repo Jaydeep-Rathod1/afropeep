@@ -67,14 +67,13 @@ class _MainTinderCardState extends State<MainTinderCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children:[
-                   SingleChildScrollView(
-                     child:  Container(
+                    Container(
                        height: MediaQuery.of(context).size.height/1.34,
                        width: MediaQuery.of(context).size.width,
                        alignment: Alignment.center,
                        child: buildCards(),
                      ),
-                   ),
+
                     showdata ?Column(
                       children: [
                         SizedBox(height: 20,),

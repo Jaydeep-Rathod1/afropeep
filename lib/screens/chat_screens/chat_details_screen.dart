@@ -2,8 +2,12 @@ import 'package:afropeep/screens/chat_screens/audio_call_screen.dart';
 import 'package:afropeep/screens/chat_screens/video_call_screen.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/input_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/color_resources.dart';
 
 class ChatDetailsScreen extends StatefulWidget {
   @override
@@ -17,11 +21,14 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
   List messages = [];
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
-
+  var receiverid;
+  var senderid;
+  ScrollController listScrollController = ScrollController();
   @override
   void initState() {
     super.initState();
     // connect();
+   getSenderid();
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -32,7 +39,12 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     });
     connect();
   }
-
+  getSenderid()async{
+    SharedPreferences prefs =
+    await SharedPreferences.getInstance();
+    senderid = prefs.getInt("userid").toString();
+    receiverid = "55";
+  }
   void connect() {
     // MessageModel messageModel = MessageModel(sourceId: widget.sourceChat.id.toString(),targetId: );
     // socket = IO.io("http://192.168.0.106:5000", <String, dynamic>{
@@ -131,13 +143,167 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
           SizedBox(width: 4.0,),
         ],
       ),
-      body: Container(
+      body: (senderid != "")
+          ? Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            StreamBuilder(
+                stream: FirebaseFirestore.instance.collection("Users").doc(senderid).collection("Chats").doc(receiverid).collection("Messages").orderBy('timestamp').snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+                  if(snapshot.hasData)
+                  {
+                    if(snapshot.data.size<=0)
+                    {
+                      return Expanded(child: Center(child: Text("No Messages yet!")));
+                    }
+                    else
+                    {
+                      return  Expanded(
+                        child: ListView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          physics: ScrollPhysics(),
+
+                          reverse: false,
+                          children: snapshot.data.docs.map((document){
+                            if(senderid == document['senderid'].toString())
+                            {
+                              return Container(
+                                padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 8),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(topLeft:Radius.circular(10),topRight:Radius.circular(10),bottomLeft:Radius.circular(10) ),
+                                      color: ColorResources.primaryColor,
+                                    ),
+                                    padding:(document["messagetype"]=="image")?EdgeInsets.zero: EdgeInsets.all(8),
+                                    child:(document["messagetype"]=="image")
+                                        ?ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+
+                                      /*child: CachedNetworkImage(
+                                        height:250 ,
+                                        width: 200,
+                                        fit: BoxFit.cover,
+                                        imageUrl: document['message'],
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Icon(Icons.error),
+                                      ),*/
+                                      child: Container(),
+                                    ):Text(document["message"], style: TextStyle(fontSize: 12,color: ColorResources.whiteColor),),
+                                  ),
+                                ),
+                              );
+                              return Container();
+                            }
+                            else
+                            {
+                              return Container(
+                                padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(topLeft:Radius.circular(10),topRight:Radius.circular(10),bottomRight:Radius.circular(10) ),
+                                      color: Color(0xFFF4F4F6),
+                                    ),
+                                    padding:(document["messagetype"]=="image")?EdgeInsets.zero: EdgeInsets.all(16),
+                                    child:(document["messagetype"]=="image")
+                                        ?ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child:Image.network(document["message"],
+                                        fit: BoxFit.cover,height: 200,),
+                                    ):Text(document["message"], style: TextStyle(fontSize: 12,color: ColorResources.blackColor),),
+                                  ),
+                                ),
+                              );
+                            }
+                          }).toList(),
+                        ),
+                      );
+                    }
+                  }
+                  else
+                  {
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                }
+            ),
+            InputWidget(),
+
+            // Offstage(
+            //   offstage: !emojiShowing,
+            //   child: SizedBox(
+            //     height: 250,
+            //     child:
+            //     EmojiPicker(
+            //       onEmojiSelected: (category, emoji) {
+            //         _msg
+            //           ..text += emoji.emoji
+            //           ..selection = TextSelection.fromPosition(
+            //               TextPosition(
+            //                   offset: _msg.text.length));
+            //       },
+            //       onBackspacePressed: () {
+            //         _msg
+            //           ..text = _msg.text.characters
+            //               .skipLast(1)
+            //               .toString()
+            //           ..selection = TextSelection.fromPosition(
+            //               TextPosition(
+            //                   offset: _msg.text.length));
+            //       },
+            //       config: Config(
+            //         columns: 7,
+            //         emojiSizeMax: 32 *
+            //             (Platform.isIOS
+            //                 ? 1.30
+            //                 : 1.0), // Issue: https://github.com/flutter/flutter/issues/28894
+            //         verticalSpacing: 0,
+            //         horizontalSpacing: 0,
+            //         gridPadding: EdgeInsets.zero,
+            //         initCategory: Category.RECENT,
+            //         bgColor: Color(0xFFF2F2F2),
+            //         indicatorColor: Colors.blue,
+            //         iconColor: Colors.grey,
+            //         iconColorSelected: Colors.blue,
+            //         progressIndicatorColor: Colors.blue,
+            //         backspaceColor: Colors.blue,
+            //         skinToneDialogBgColor: Colors.white,
+            //         skinToneIndicatorColor: Colors.grey,
+            //         enableSkinTones: true,
+            //         showRecentsTab: true,
+            //         recentsLimit: 28,
+            //         noRecents: const Text(
+            //           'No Recents',
+            //           style: TextStyle(
+            //               fontSize: 20, color: Colors.black26),
+            //           textAlign: TextAlign.center,
+            //         ),
+            //         tabIndicatorAnimDuration:
+            //         kTabScrollDuration,
+            //         categoryIcons: const CategoryIcons(),
+            //         buttonMode: ButtonMode.MATERIAL,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      )
+          : CircularProgressIndicator(),
+      /*body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: WillPopScope(
           child: Column(
             children: [
-              /*Expanded(
+             Expanded(child:  Text("DEmo"),),
+              *//*Expanded(
                 // height: MediaQuery.of(context).size.height - 150,
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -162,10 +328,10 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                     // }
                   },
                 ),
-              ),*/
-              Expanded(
-                  child: Image.asset('assets/images/conversation.png',fit: BoxFit.fill,)),
-              /*Align(
+              ),*//*
+             *//* Expanded(
+                  child: Image.asset('assets/images/conversation.png',fit: BoxFit.fill,)),*//*
+              *//*Align(
                 alignment: Alignment.bottomCenter,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -296,7 +462,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                       Container(),
                     ],
                   ),
-                ),*/
+                ),*//*
                 InputWidget()
 
             ],
@@ -312,7 +478,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
             return Future.value(false);
           },
         ),
-      ),
+      ),*/
 
     );
   }

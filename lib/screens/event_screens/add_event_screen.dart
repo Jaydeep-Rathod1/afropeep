@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddEventScreen extends StatefulWidget {
   @override
@@ -186,30 +187,40 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         var eventLatitude= _eventLocation.text.toString();
                         var eventLongitude = _eventLocation.text.toString();
                         var eventabout = _eventabout.text.toString();
-                        // Map<String, String> params = Map();
-                        // params['event_name'] = name;
-                        // params['event_Date'] = eventDate;
-                        // params['latitude'] = eventLatitude;
-                        // params['longitude'] = eventLongitude;
-                        // params['about_event'] = eventabout;
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        var userid = prefs.getInt('userid');
                         FormData data = FormData.fromMap({
-                          "user_id":17,
+                          "user_id":userid,
                           "event_name" :name,
                           "event_Date" :eventDate,
-                          "latitude": "",
-                          "longitude":"",
+                          "latitude": "sdfsd",
+                          "longitude":"sdfsdf",
                           "about_event":eventabout,
-                          "event_img":await MultipartFile.fromFile(
-                            imageList[0].path,
-                            filename: imageList[0].path.split('/').last,
-                          ),
+                          "event_img" :"aaa",
+                          // "event_img":await MultipartFile.fromFile(
+                          //   imageList[0].path,
+                          //   filename: imageList[0].path.split('/').last,
+                          // ),
                         });
+                       /* Map params = Map();
+                        params["user_id"] = userid;
+                        params["event_name"] = name;
+                        params["event_Date"] = eventDate;
+                        params["latitude"] = "aaa";
+                        params["longitude"] = "bbbb";
+                        params["about_event"] =eventabout ;
+                        params["event_img"] = jsonEncode(await MultipartFile.fromFile(
+                          imageList[0].path,
+                          filename: imageList[0].path.split('/').last,
+                        ));*/
+
+
 
                         await _dio.post(ADD_EVENT,data:data).then((value) {
                           if(value.statusCode == 200)
                           {
                             print("called");
-                            // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
+                            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
                           }
                         });
                       },

@@ -1061,12 +1061,12 @@ class _QuestionTenState extends State<QuestionTen> {
                 backgroundColor: ColorResources.blackColor,
                 onPressed: ()async{
                   // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(questionTenValue != "" && questionTenValue ==null)
+                  if(questionTenValue != "" || questionTenValue ==null)
                   {
                     setState(() {
 
                       questionID = arrAllQuestionsList[9].qId.toString();
-                      questionValue = _questionSixAnswer.text.toString();
+                      questionValue = questionTenValue.toString();
                     });
                   await insertQuestionAnswer(questionID,questionValue,userid);
                       if(index < 13)
@@ -1193,7 +1193,7 @@ class _QuestionElevanState extends State<QuestionElevan> {
                   {
                     setState(() {
                       questionID = arrAllQuestionsList[10].qId.toString();
-                      questionValue = _questionSixAnswer.text.toString();
+                      questionValue = questioneElevanValue.toString();
                     });
                     await insertQuestionAnswer(questionID,questionValue,userid);
                     if(index < 13)

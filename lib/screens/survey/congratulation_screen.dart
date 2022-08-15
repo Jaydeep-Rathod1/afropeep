@@ -6,7 +6,10 @@ import 'package:afropeep/screens/home_screens/home_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CongratulationScreen extends StatefulWidget {
 
@@ -15,6 +18,7 @@ class CongratulationScreen extends StatefulWidget {
 }
 
 class _CongratulationScreenState extends State<CongratulationScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +72,9 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
                      height: 45,
                      backgroundColor: ColorResources.blackColor,
                      onPressed: (){
-                       Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseYourLocationScreen()));
+                       // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseYourLocationScreen()));
+                       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+
                      },
                      buttonText: 'Lets Swipe',
                      fontSize: 16.0,
@@ -83,5 +89,37 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
           ),
         )
     );
+
+  }
+  final geolocator =
+  Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
+  Position _currentPosition;
+  String currentAddress = "";
+  /*void getCurrentLocation() {
+    if(Geolocator.requestPermission)
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }*/
+  void getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+      Placemark place = p[0];
+
+      setState(() {
+        currentAddress =
+        "${place.thoroughfare},${place.subThoroughfare},${place.name}, ${place.subLocality}";
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

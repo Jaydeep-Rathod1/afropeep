@@ -15,4 +15,9 @@ const ADD_IMAGE = BASE_URL +"addphoto";
 const ADD_EVENT = BASE_URL+"addevent";
 const ALL_EVENT = BASE_URL+"allevent";
 const MY_EVENT = BASE_URL+"myevent";
+
+
+const REQUEST_SEND_MATCH = BASE_URL+"requestsend";
+const GET_MATCH_LIST = BASE_URL+"receiverequest";
+const REQUEST_REJECT_MATCH = BASE_URL+"statusrequest";
 String Commonmessage = '';

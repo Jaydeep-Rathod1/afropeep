@@ -25,7 +25,7 @@ class _AllEventScreenState extends State<AllEventScreen> {
   getAllEventList() async{
     await _dio.get(ALL_EVENT).then((value) {
       var varJson = value.data as List;
-      print(varJson);
+
       if(value.statusCode == 200)
       {
         setState(() {
@@ -36,71 +36,63 @@ class _AllEventScreenState extends State<AllEventScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height, //height of TabBarView
-      child: Column(
-        children: [
-          Expanded(
-            child:ListView.builder(
-                itemCount: arrAllEventList.length,
-                itemBuilder: (BuildContext context, int index){
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen()));
-                        },
-                        child: Stack(
+    return ListView.builder(
+        itemCount: arrAllEventList.length,
+        physics: ScrollPhysics(),
+        itemBuilder: (BuildContext context, int index){
+          return Column(
+            children: [
+              GestureDetector(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen()));
+                },
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Container(
+                          child: Image.asset(
+                            'assets/images/event_4.png',
+                            height: MediaQuery.of(context).size.height/4.5,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 25,),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Container(
-                                  child: Image.asset(
-                                    'assets/images/event_4.png',
-                                    height: MediaQuery.of(context).size.height/4.5,
-                                    width: MediaQuery.of(context).size.width,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
+                            CustomText(text:arrAllEventList[index].eventName,fontSize: 14,color: ColorResources.whiteColor,),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Image.asset('assets/icons/calender_icon.png',color: ColorResources.whiteColor,width: 11, fit: BoxFit.cover,),
+                                SizedBox(width: 4.0,),
+                                CustomText(text:arrAllEventList[index].eventDate,fontSize: 10,color: ColorResources.whiteColor,),
+                                SizedBox(width: 22.0,),
+                                Icon(Icons.location_on_outlined,color: ColorResources.whiteColor,size: 11,),
+                                SizedBox(width: 4.0,),
+                                CustomText(text:arrAllEventList[index].longitude,fontSize: 10,color: ColorResources.whiteColor,),
+                              ],
                             ),
-                            Positioned(
-                              bottom: 0.0,
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 25,),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    CustomText(text:arrAllEventList[index].eventName,fontSize: 14,color: ColorResources.whiteColor,),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/icons/calender_icon.png',color: ColorResources.whiteColor,width: 11, fit: BoxFit.cover,),
-                                        SizedBox(width: 4.0,),
-                                        CustomText(text:arrAllEventList[index].eventDate,fontSize: 10,color: ColorResources.whiteColor,),
-                                        SizedBox(width: 22.0,),
-                                        Icon(Icons.location_on_outlined,color: ColorResources.whiteColor,size: 11,),
-                                        SizedBox(width: 4.0,),
-                                        CustomText(text:arrAllEventList[index].longitude,fontSize: 10,color: ColorResources.whiteColor,),
-                                      ],
-                                    ),
-                                    SizedBox(height: 13.0,)
-                                  ],
-                                ),
-                              ),
-                            ),
+                            SizedBox(height: 13.0,)
                           ],
                         ),
                       ),
-                      SizedBox(height: 15.0,),
-                    ],
-                  );
-                }
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 15.0,),
+            ],
+          );
+        }
     );
   }
 }

@@ -2,10 +2,14 @@
 
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/authentication_screens/phone_number_screen.dart';
+import 'package:afropeep/screens/onboarding_screen/choose_mode_to_start_screen.dart';
 import 'package:afropeep/widgets/custom_button_with_icon.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:page_transition/page_transition.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -14,6 +18,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  var googleSignInAccount;
+  var _googleSignIn = GoogleSignIn();
+
+  bool isSignIn =false;
+  bool google =false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,12 +51,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 45,
                 padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                 backgroundColor: ColorResources.whiteColor,
-                onPressed: loginWithGoogle,
+                onPressed: ()async{
+                  // await signInwithGoogle();
+
+                  GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+                  GoogleSignInAuthentication googleSignInAuthentication =  await googleSignInAccount.authentication;
+                  print(googleSignInAccount.email);
+                  print(googleSignInAccount.displayName);
+                  print(googleSignInAccount.photoUrl);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ChooseModeToStart()));
+                },
                 buttonText: 'Continue With Google',
                 fontSize: 16.0,
                 textColor: ColorResources.blackColor,
                 width:MediaQuery.of(context).size.width,
-
               ),
               const SizedBox(height: 10,),
               CustomButtonWithIcon(
@@ -111,6 +129,19 @@ class _LoginScreenState extends State<LoginScreen> {
       )
     );
   }
+
+
+
+/*  Future<String> signInwithGoogle() async {
+
+      final GoogleSignInAccount googleSignInAccount =
+      await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount.authentication;
+      await _auth.signInWithGoogle( accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,);
+
+  }*/
   loginWithGoogle(){}
   loginWithFacebook(){}
   loginWithApple(){}

@@ -33,9 +33,12 @@ class _MyEventScreenState extends State<MyEventScreen> {
       print(varJson);
       if(value.statusCode == 200)
       {
-        setState(() {
-          arrAllMyEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
-        });
+       if(varJson.isNotEmpty)
+         {
+           setState(() {
+             arrAllMyEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+           });
+         }
       }
     });
   }

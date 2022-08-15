@@ -24,6 +24,7 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
   List<File> imageList = [];
   Dio _dio = Dio();
   var pickedFile ;
+  bool isLoading = false;
   void _pickedImage() {
     showDialog<ImageSource>(
       context: context,
@@ -70,6 +71,15 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+           /* Visibility(visible: isLoading,
+                child:Expanded(
+                    child:Container(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        valueColor:AlwaysStoppedAnimation<Color>(Colors.red),
+                      ),
+                    )
+                ) ),*/
             const SizedBox(
               height: 47.0,
             ),
@@ -158,6 +168,9 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
     );
   }
   insertImages()async{
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userid = prefs.getInt('userid');
 
@@ -173,6 +186,9 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
         });
        await _dio.post(ADD_IMAGE,data: data).then((value)async {
             print("called = ${value}");
+            setState(() {
+              isLoading = false;
+            });
             Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseInterestesScreen()));
             // Navigator.pop(context);
           });
@@ -183,41 +199,47 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
       }
   }
   GenrateImageCell(index){
-    return Stack(
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width/3.2,
-          height: 138,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-          color:ColorResources.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          ),
-          child:  ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: imageList.asMap().containsKey(index) ? Image.file(imageList[index],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
-          ),
-        ),
-        Positioned(
-            top: 7,
-            right: 8,
-            child: InkWell(
-              onTap: (){
-                // print(imageList.removeAt(index));
-                imageList.removeAt(index);
-                setState((){});
-              },
-              child: ClipOval(
-                child: Material(
-                  color: Colors.white, // Button color
-                  child: Container(
-                    child:imageList.asMap().containsKey(index) ? Icon(Icons.close,size: 16,):null,),
-                ),
+    if(index > 0)
+      {
+        return Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width/3.2,
+              height: 138,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color:ColorResources.whiteColor,
+                borderRadius: BorderRadius.circular(10),
               ),
+              child:  ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: imageList.asMap().containsKey(index) ? Image.file(imageList[index],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
+              ),
+            ),
+            Positioned(
+                top: 7,
+                right: 8,
+                child: InkWell(
+                  onTap: (){
+                    // print(imageList.removeAt(index));
+                    imageList.removeAt(index);
+                    setState((){});
+                  },
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.white, // Button color
+                      child: Container(
+                        child:imageList.asMap().containsKey(index) ? Icon(Icons.close,size: 16,):null,),
+                    ),
+                  ),
+                )
             )
-            )
-      ],
-    );
+          ],
+        );
+      }
+    else{
+      Container();
+    }
 
 
   }

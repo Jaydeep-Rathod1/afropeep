@@ -154,6 +154,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                    validPhoneLength? Container(
                      padding: EdgeInsets.only(left: 2.0),
                      child: CustomText(text: 'Phone Number Must Be 10 Digits',color: Colors.white,fontSize: 11,),):Container(),
+                   validNumber? Expanded(child: Container(
+                     padding: EdgeInsets.only(left: 2.0),
+                     child: Text('Mobile Number Already Registered',style: TextStyle(color: Colors.white,fontSize: 11,),),)):Container(),
                  ],
                ),
 
@@ -175,12 +178,27 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                    await _dio.post(ADD_USER,data:jsonEncode(params)).then((value)async {
                      if(value.statusCode == 200)
                      {
-                       print("value = ${value.data}");
-                       var userid = value.data['user_id'];
-                       print("user id = ${userid}");
-                       SharedPreferences prefs = await SharedPreferences.getInstance();
-                       prefs.setInt('userid', userid);
-                       SendOtpRequest(userid);
+                       print("data status = ${value.data['status']}");
+                       if(value.data['status'] == 'false')
+                         {
+                           setState(() {
+                             validNumber = true;
+                           });
+
+                         }
+                       else
+                       {
+                         setState(() {
+                           validNumber = false;
+                         });
+                         print("value = ${value.data}");
+                         var userid = value.data['user_id'];
+                         print("user id = ${userid}");
+                         SharedPreferences prefs = await SharedPreferences.getInstance();
+                         prefs.setInt('userid', userid);
+                         SendOtpRequest(userid);
+                       }
+
                      }
                    });
                  },
@@ -202,6 +220,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   bool validPhone= false;
   bool validPhoneLength= false;
   bool validCountryCode= false;
+  bool validNumber = false;
   _isValidate(){
    setState(() {
      _phoneNumberController.text.isEmpty ?validPhone = true :validPhone = false;
@@ -219,7 +238,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       print("value = ${value}");
       if(value.statusCode == 200)
       {
-        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+        Navigator.pushReplacement(context,PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+        // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
       }
     });
   }
