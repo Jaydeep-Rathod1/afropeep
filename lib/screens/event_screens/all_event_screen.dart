@@ -6,6 +6,8 @@ import 'package:afropeep/widgets/custom_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../resouces/functions.dart';
+
 class AllEventScreen extends StatefulWidget {
 
   @override
@@ -16,13 +18,21 @@ class _AllEventScreenState extends State<AllEventScreen> {
   List<EventModel> arrAllEventList = [];
   List<EventModel> arrEventList = [];
   Dio _dio = Dio();
+  BuildContext _mainContex;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAllEventList();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("called");
+      setState(() {
+      getAllEventList();
+      });
+    });
   }
   getAllEventList() async{
+    Apploader(_mainContex);
     await _dio.get(ALL_EVENT).then((value) {
       var varJson = value.data as List;
 
@@ -30,6 +40,7 @@ class _AllEventScreenState extends State<AllEventScreen> {
       {
         setState(() {
           arrAllEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+          RemoveAppLoader(_mainContex);
         });
       }
     });

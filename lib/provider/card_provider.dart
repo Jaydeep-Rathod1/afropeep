@@ -121,7 +121,6 @@ class CardProvider extends ChangeNotifier{
   }
 
   void like(int userid){
-
     _angle = 20;
     _position += Offset(2*_screenSize.width/2,0);
     _nextCard();
@@ -186,7 +185,10 @@ class CardProvider extends ChangeNotifier{
     resetPosition();
   }
   getCardImages()async{
-    await _dio.get(ALL_USER).then((value) {
+
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    var userid = prefs.getInt('userid');
+    await _dio.post(ALL_USER,data: {"userid":userid}).then((value) {
       var varJson = value.data as List;
       print("All Length = ${varJson.length}");
       if(value.statusCode == 200)

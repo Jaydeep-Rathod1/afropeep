@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:afropeep/models/user_models/country_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/resouces/functions.dart';
 import 'package:afropeep/screens/authentication_screens/opt_verification_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -26,18 +27,25 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Dio _dio = Dio();
   CountryModel dropdownvalue;
   // List of items in our dropdown menu
-
+  BuildContext _mainContex;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCountryCode();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getCountryCode();
+      });
+    });
   }
 
   List<CountryModel> getData = [];
   List<CountryModel> arrAllCountryList = [];
   List<CountryModel> arrCountryList = [];
   getCountryCode()async {
+    Apploader(_mainContex);
+
     await _dio.get(GET_COUNTRY).then((value) {
 
       var varJson = value.data as List;
@@ -46,6 +54,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         {
           setState(() {
             arrAllCountryList =varJson.map((e) =>CountryModel.fromJson(e)).toList();
+            RemoveAppLoader(_mainContex);
             dropdownvalue = arrAllCountryList[0];
           });
         }
@@ -171,36 +180,44 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                  backgroundColor: ColorResources.blackColor,
                  onPressed: ()async{
                    _isValidate();
-                   // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
-                   Map<String, String> params = Map();
-                   params['mobile_number'] = _phoneNumberController.text.toString();
-                   params['country_id'] = dropdownvalue.countryId.toString();
-                   await _dio.post(ADD_USER,data:jsonEncode(params)).then((value)async {
-                     if(value.statusCode == 200)
-                     {
-                       print("data status = ${value.data['status']}");
-                       if(value.data['status'] == 'false')
+                   if(_phoneNumberController.text.isNotEmpty &&_phoneNumberController.text.isNotEmpty && _phoneNumberController.text.length == 10 &&  dropdownvalue.countryId != null){
+                     // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                     Map<String, String> params = Map();
+                     params['mobile_number'] = _phoneNumberController.text.toString();
+                     params['country_id'] = dropdownvalue.countryId.toString();
+                     await _dio.post(ADD_USER,data:jsonEncode(params)).then((value)async {
+                       print(value);
+                       if(value.statusCode == 200)
+                       {
+                         print("data status = ${value.data['status']}");
+                         if(value.data['status'] == 'false')
                          {
                            setState(() {
                              validNumber = true;
                            });
 
                          }
-                       else
-                       {
-                         setState(() {
-                           validNumber = false;
-                         });
-                         print("value = ${value.data}");
-                         var userid = value.data['user_id'];
-                         print("user id = ${userid}");
-                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                         prefs.setInt('userid', userid);
-                         SendOtpRequest(userid);
-                       }
+                         else
+                         {
+                           setState(() {
+                             validNumber = false;
+                           });
+                           print("value = ${value.data}");
+                           var userid = value.data['user_id'];
+                           print("user id = ${userid}");
+                           SharedPreferences prefs = await SharedPreferences.getInstance();
+                           prefs.setInt('userid', userid);
+                           var otp = value.data['otp'].toString();
+                           // SendOtpRequest(userid,otp);
+                           Navigator.pushReplacement(context,PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                         }
 
-                     }
-                   });
+                       }
+                     });
+                   }else{
+                     _isValidate();
+                   }
+
                  },
                  buttonText: 'Next',
                  fontSize: 16.0,
@@ -228,11 +245,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
      dropdownvalue.countryId == null ? validCountryCode = true:validCountryCode=false;
    });
   }
-  SendOtpRequest(int userid) async{
+  /*SendOtpRequest(int userid,String otp) async{
     Map<String, String> params = Map();
     params['user_id'] = userid.toString();
-    params['otp'] = "123";
-    print(params);
+    params['otp'] = otp.toString();
+    print("called= ${params}");
     await _dio.post(SEND_OTP_REQUEST,data: params).then((value) {
       // var varJson = value.data;
       print("value = ${value}");
@@ -242,5 +259,5 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
       }
     });
-  }
+  }*/
 }

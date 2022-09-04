@@ -42,6 +42,7 @@ dependencies:
   blur:
   intl:
   image_picker:
+  camera:
   shared_preferences:
   file_picker:
   firebase_core:

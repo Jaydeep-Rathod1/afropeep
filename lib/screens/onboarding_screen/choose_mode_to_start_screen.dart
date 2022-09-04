@@ -2,6 +2,7 @@
 import 'package:afropeep/models/user_models/modetostart_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/resouces/functions.dart';
 import 'package:afropeep/screens/onboarding_screen/choose_gender_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -27,9 +28,14 @@ class _ChooseModeToStartState extends State<ChooseModeToStart> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getModeToStartList();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getModeToStartList();
+      });
+    });
   }
   getModeToStartList()async{
+    Apploader(context);
     await _dio.get(GET_MODE).then((value) {
       var varJson = value.data as List;
       print(varJson);
@@ -37,6 +43,7 @@ class _ChooseModeToStartState extends State<ChooseModeToStart> {
       {
         setState(() {
           arrAllModeToStartList =varJson.map((e) =>ModeToStartModel.fromJson(e)).toList();
+          RemoveAppLoader(context);
           // dropdownvalue = arrAllCountryList[0];
         });
         print("aal = ${arrAllModeToStartList}");
@@ -99,7 +106,7 @@ class _ChooseModeToStartState extends State<ChooseModeToStart> {
               ),
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height/3.0,
+              height: MediaQuery.of(context).size.height/2.0,
               child: ListView.builder(
                   itemCount: arrAllModeToStartList.length,
                   itemBuilder: (BuildContext context, int index) {

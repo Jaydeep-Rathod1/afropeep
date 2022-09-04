@@ -189,19 +189,24 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         var eventabout = _eventabout.text.toString();
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         var userid = prefs.getInt('userid');
-                        FormData data = FormData.fromMap({
+                       /* FormData data = FormData.fromMap({
                           "user_id":userid,
                           "event_name" :name,
                           "event_Date" :eventDate,
                           "latitude": "sdfsd",
                           "longitude":"sdfsdf",
                           "about_event":eventabout,
-                          "event_img" :"aaa",
-                          // "event_img":await MultipartFile.fromFile(
-                          //   imageList[0].path,
-                          //   filename: imageList[0].path.split('/').last,
-                          // ),
-                        });
+                          "event_img" :await MultipartFile.fromFile(
+                            imageList[0].path,
+                          filename: imageList[0].path.split('/').last,
+                          ),
+                          // "event_img":{
+                          //   "image":await MultipartFile.fromFile(
+                          //     imageList[0].path,
+                          //     filename: imageList[0].path.split('/').last,
+                          //   ),
+                          // }
+                        });*/
                        /* Map params = Map();
                         params["user_id"] = userid;
                         params["event_name"] = name;
@@ -213,16 +218,42 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           imageList[0].path,
                           filename: imageList[0].path.split('/').last,
                         ));*/
+                        /*Map<String, dynamic> formData = {
+                          "user_id":userid,
+                          "event_name" :name,
+                          "event_Date" :eventDate,
+                          "latitude": "sdfsd",
+                          "longitude":"sdfsdf",
+                          "about_event":eventabout,
+                          "event_img": await MultipartFile.fromFile(
+                            imageList[0].path,
+                            filename: imageList[0].path.split('/').last,
+                          ),
+                        };*/
 
-
-
-                        await _dio.post(ADD_EVENT,data:data).then((value) {
-                          if(value.statusCode == 200)
-                          {
-                            print("called");
-                            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
-                          }
+                        FormData data = FormData.fromMap({
+                          "user_id":userid,
+                          "event_name" :name,
+                          "event_Date" :eventDate,
+                          "latitude": "sdfsd",
+                          "longitude":"sdfsdf",
+                          "about_event":eventabout,
+                          "event_img": await MultipartFile.fromFile(
+                            imageList[0].path,
+                            filename: imageList[0].path.split('/').last,
+                          ),
                         });
+                        // print(formData);
+                        var respone =await _dio.post(ADD_EVENT,data:data).catchError((e) => print(e.response.toString()));
+
+                        // await _dio.post(ADD_EVENT,data:data).then((value) {
+                        //   print("value= ${value}");
+                        //   if(value.statusCode == 200)
+                        //   {
+                        //     print("called");
+                        //     Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
+                        //   }
+                        // });
                       },
                       buttonText: 'Post',
                       fontSize: 16.0,

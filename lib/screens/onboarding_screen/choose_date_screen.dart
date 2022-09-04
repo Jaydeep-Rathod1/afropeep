@@ -30,7 +30,7 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
   TextEditingController _chooseMonth = TextEditingController();
   TextEditingController _chooseYear = TextEditingController();
   DateTime selectedDate = DateTime.now();
-  bool isValidateDate = true;
+  bool isValidateDate = false;
   Dio _dio = Dio();
   var newdate;
   @override
@@ -202,6 +202,7 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
     params['lastname'] = widget.lastName.toString();
     params['birth_date'] = newdate;
     print(params);
+
     await _dio.post(UPDATE_USER,data: params).then((value) {
       print("value = ${value}");
       if(value.statusCode == 200)

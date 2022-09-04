@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
 
 class AboutScreen extends StatefulWidget {
 
@@ -10,6 +16,36 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
+  Dio _dio = Dio();
+  var aboutData ;
+  BuildContext _mainContex;
+  getAboutdata()async{
+    Apploader(_mainContex);
+    Map<String, String> params = Map();
+    params['settingid'] = "3";
+
+    await _dio.post(SETTING_URL,data:jsonEncode(params)).then((value)async {
+      if(value.statusCode == 200)
+      {
+        print("data status = ${value}");
+        var varJson = value.data;
+        print(varJson['setting_id']);
+        setState(() {
+          aboutData = varJson;
+          RemoveAppLoader(_mainContex);
+        });
+      }
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getAboutdata();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,30 +78,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 SizedBox(height: 30.0,),
                 CustomText(
-                  text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+                  text: aboutData!= null && aboutData.isNotEmpty ? aboutData['setting_value']:'',
                   fontSize: 12,
                   height:1.5,
                 ),
 
-                SizedBox(height: 20,),
-                CustomText(
-                  text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.',
-                  fontSize: 12,
-                  height:1.5,
-                ),
-                SizedBox(height: 20,),
-                CustomText(
-                  text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
-                  fontSize: 12,
-                  height:1.5,
-                ),
-                SizedBox(height: 20,),
-                CustomText(
-                  text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam  nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
-                  fontSize: 12,
-                  height:1.5,
-                ),
-                SizedBox(height: 20,),
 
               ],
             ),

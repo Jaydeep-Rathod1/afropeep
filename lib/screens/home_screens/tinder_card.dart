@@ -1,6 +1,7 @@
 import 'package:afropeep/models/user_models/user_model.dart';
 import 'package:afropeep/provider/card_provider.dart';
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/constants.dart';
 import 'package:afropeep/screens/match_screens/its_match_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -133,7 +134,8 @@ class _TinderCardState extends State<TinderCard> {
               decoration: BoxDecoration(
                   image: DecorationImage(
                     // image: AssetImage(widget.imageUrl),
-                      image: AssetImage('assets/images/user_1.png'),
+                    //   image: NetworkImage("{URL::to('/')}}/uploads/userimages/16595199681789.jpg"),
+                      image:widget.imageUrl !=null ?NetworkImage(GET_IMAGES_LINK+widget.imageUrl):NetworkImage(GET_IMAGES_LINK+"16595199681789.jpg"),
                       fit: BoxFit.cover,
                       alignment: Alignment(-0.3,0)
                   )
@@ -142,7 +144,7 @@ class _TinderCardState extends State<TinderCard> {
           ),
           Positioned(
               top: MediaQuery.of(context).size.height/5,
-              left: 20.0,
+              right: 20.0,
               child: Column(
                 children: [
                   GestureDetector(
@@ -259,7 +261,7 @@ class _TinderCardState extends State<TinderCard> {
       ),
     );
   }
- /* Widget buildCard(){
+  /*Widget buildCard(){
     return  SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +272,7 @@ class _TinderCardState extends State<TinderCard> {
             width: MediaQuery.of(context).size.width,
             child: Stack(
               children: [
-                ClipRRect(
+               *//* ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     decoration: BoxDecoration(
@@ -397,12 +399,141 @@ class _TinderCardState extends State<TinderCard> {
                         ],
                       ),
                     )
+                ),*//*
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                          // image: AssetImage(widget.imageUrl),
+                          //   image: NetworkImage("{URL::to('/')}}/uploads/userimages/16595199681789.jpg"),
+                            image:widget.imageUrl !=null ?NetworkImage(GET_IMAGES_LINK+widget.imageUrl):NetworkImage(GET_IMAGES_LINK+"16595199681789.jpg"),
+                            fit: BoxFit.cover,
+                            alignment: Alignment(-0.3,0)
+                        )
+                    ),
+                  ),
+                ),
+                Positioned(
+                    top: MediaQuery.of(context).size.height/5,
+                    left: 20.0,
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                            onTap: (){
+                              // Navigator.of(context).push(MaterialPageRoute(builder: (con)=>ItsMatchScreen()));
+                              var provider = Provider.of<CardProvider>(context,listen: false);
+                              provider.like(userid);
+                            },
+                            child:Container(
+                              height: 35,
+                              width: 35,
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle
+                              ),
+                              child: Image.asset('assets/icons/like_icon.png',height: 27,width: 22,fit: BoxFit.cover,),
+                            )
+                          //
+                        ),
+                        SizedBox(height: 10.0,),
+                        GestureDetector(
+                            onTap: (){
+                              var provider = Provider.of<CardProvider>(context,listen: false);
+                              provider.superlike(userid);
+                            },
+                            child:Container(
+                                height: 35,
+                                width: 35,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.star,color: ColorResources.primaryColor,)
+                            )
+                          //
+                        ),
+                        SizedBox(height: 10.0,),
+                        GestureDetector(
+                            onTap: (){
+                              var provider = Provider.of<CardProvider>(context,listen: false);
+                              provider.dislike(userid);
+                            },
+                            child:Container(
+                                height: 35,
+                                width: 35,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.close,color: ColorResources.primaryColor,)
+                            )
+                          //
+                        ),
+                        SizedBox(height: 10.0,),
+                        GestureDetector(
+                            onTap: (){},
+                            child:Container(
+                              height: 35,
+                              width: 35,
+                              padding: EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle
+                              ),
+                              child: Image.asset('assets/icons/chat_icon.png',fit: BoxFit.cover,color: ColorResources.primaryColor,),
+                            )
+                          //
+                        ),
+                        SizedBox(height: 10.0,),
+                        GestureDetector(
+                            onTap: (){},
+                            child:Container(
+                              height: 35,
+                              width: 35,
+                              padding: EdgeInsets.only(top: 5),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle
+                              ),
+                              child: Image.asset('assets/icons/metro_undo_icon.png',height:30,width:20,fit: BoxFit.fill,color: ColorResources.primaryColor,),
+                            )
+                          //
+                        ),
+                      ],
+                    )
+                ),
+                Positioned(
+                    bottom: 30.0,
+                    child: Padding(
+                      padding:EdgeInsets.only(left: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CustomText(text:widget.userData.lastname != null && widget.userData.lastname.isNotEmpty ?widget.userData.lastname: "User${widget.userData.userId}",fontSize: 18.0,color: ColorResources.whiteColor,),
+                          SizedBox(height: 5.0,),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.location_on_outlined,size: 15.0,color: ColorResources.whiteColor,),
+                              SizedBox(width: 5.0,),
+                              CustomText(text: 'Ottawa, Canada ',fontSize: 12.0,color: ColorResources.whiteColor,),
+                            ],
+                          )
+                        ],
+                      ),
+                    )
                 ),
               ],
             ),
           ),
           SizedBox(height: 20,),
-         *//* SingleChildScrollView(
+          SingleChildScrollView(
             controller: scrollController,
             child: Column(
               children: [
@@ -566,9 +697,11 @@ class _TinderCardState extends State<TinderCard> {
                   children: [
                     Row(
                       children: [
+
                         CustomButton(
                           fontSize: 12,
                           backgroundColor: ColorResources.primaryColor,
+
                           onPressed: (){},
                           buttonText: 'Treking',
                         ),
@@ -579,9 +712,9 @@ class _TinderCardState extends State<TinderCard> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                Divider(),
-                SizedBox(height: 17,),
-                Align(
+               *//* Divider(),
+                SizedBox(height: 17,),*//*
+               *//* Align(
                   alignment: Alignment.center,
                   child: CustomText(text: 'Check out my new activities on Instagram',fontSize: 12,),
                 ),
@@ -603,10 +736,10 @@ class _TinderCardState extends State<TinderCard> {
                         buttonText: 'Visit',
                       ),
                     )
-                )
+                )*//*
               ],
             ),
-          ),*//*
+          ),
         ],
       ),
     );
@@ -617,24 +750,67 @@ class _TinderCardState extends State<TinderCard> {
     var opacity = provider.getStatusOpacity();
     switch (status){
       case CardStatus.like:
-        var child =buildStamp(angle:-0.5,opacity:opacity,color:Colors.green,text:'LIKE');
-        return Positioned(
-            top: 64,
-            left: 50,
-            child: child);
-      case CardStatus.dislike:
-        var child =buildStamp(angle:0.5,opacity:opacity,color:Colors.red,text:'DISLIKE');
-        return Positioned(
-            top: 64,
-            left: 50,
-            child: child);
-      case CardStatus.superlike:
-        var child =buildStamp(angle:0.0,opacity:opacity,color:Colors.blue,text:'SUPER \n LIKE');
+
         return Positioned(
             top: 0,
+            bottom: 0,
             left: 0,
-            bottom: 128,
-            child: child);
+            right: 0,
+            child: Stack(
+          alignment: Alignment.center,
+          children: [
+              Container(
+              height: 40,
+              width: 40,
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle
+              ),
+              child: Image.asset('assets/icons/like_icon.png',height: 27,width: 22,fit: BoxFit.cover,),),
+          ],
+        ));
+      case CardStatus.dislike:
+        return Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle
+                  ),
+                  child: Icon(Icons.close,color: ColorResources.primaryColor,size: 30,)),
+              ],
+            ));
+      case CardStatus.superlike:
+
+        return Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle
+                  ),
+                  child: Icon(Icons.star,color: ColorResources.primaryColor,size: 30,)),
+              ],
+            ));
       default:
         return Container();
     }

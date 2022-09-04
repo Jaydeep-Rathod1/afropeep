@@ -2,6 +2,7 @@
 import 'package:afropeep/models/user_models/questions_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/resouces/functions.dart';
 import 'package:afropeep/screens/survey/congratulation_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -43,14 +44,20 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getQuestionsList();
-    getUserId();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getQuestionsList();
+        getUserId();
+      });
+    });
   }
   getUserId()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userid =prefs.getInt('userid').toString();
   }
   getQuestionsList()async {
+
+    Apploader(context);
     await _dio.get(GET_QUESTIONS).then((value) {
       var varJson = value.data as List;
       print(varJson);
@@ -58,6 +65,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       {
         setState(() {
           arrAllQuestionsList =varJson.map((e) =>QuestionsModel.fromJson(e)).toList();
+          RemoveAppLoader(context);
         });
         print(arrAllQuestionsList);
       }
@@ -100,7 +108,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 ),
                 Expanded(child: Align(
                   alignment: Alignment.center,
-                  child: CustomText(text:'${index<10 ? '${0}${index}':index}/13',fontSize: 14,color: ColorResources.whiteColor,),
+                  child: CustomText(text:'${index<13 ? '${0}${index}':index}/13',fontSize: 14,color: ColorResources.whiteColor,),
                 ))
               ],
             )
@@ -192,14 +200,12 @@ class _QuestionOneState extends State<QuestionOne> {
                         isValidMessage = "";
                         questionID = "";
                         questionValue = "";
-                        index++;
+                        index +=1;
                       });
                       _pageController.animateToPage(_pageController.page.toInt() + 1,
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeIn
                       );
-
-
                     }
                     else{
                       print("called");
@@ -828,7 +834,7 @@ class _QuestionEightState extends State<QuestionEight> {
               controller: _questionEightAnswer,
               hintText: 'Enter Height',
               fontSize: 14.0,
-              textInputType: TextInputType.multiline,
+              textInputType: TextInputType.number,
               borderRadius: 29
           ),
         ),

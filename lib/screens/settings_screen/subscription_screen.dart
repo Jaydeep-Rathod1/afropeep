@@ -1,7 +1,12 @@
+import 'package:afropeep/models/settings_models/SubscriptionModel.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
 
 class SubscriptionScreen extends StatefulWidget {
 
@@ -12,6 +17,35 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String selectedvalue;
+  Dio _dio = Dio();
+  var privacyData ;
+  BuildContext _mainContex;
+  List<SubscritionModel> arrSubscriptionList = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getSubscriptiondata();
+
+    });
+  }
+  getSubscriptiondata()async{
+    Apploader(_mainContex);
+    await _dio.get(SUBSCRITION_URL).then((value) {
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrSubscriptionList =varJson.map((e) =>SubscritionModel.fromJson(e)).toList();
+          RemoveAppLoader(_mainContex);
+        });
+
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,12 +61,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
+      body: Padding(
             padding:EdgeInsets.all(20.0),
             child: Column(
               children: [
-                 Align(
+                Align(
                    alignment: Alignment.center,
                    child: CustomText(
                        text:'choose subscription'.toUpperCase(),
@@ -74,7 +107,58 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ],
                 ),
                 SizedBox(height: 20.0,),
-                GestureDetector(
+
+                Expanded(
+                   child:  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                       padding: EdgeInsets.zero,
+                       shrinkWrap: true,
+                       itemCount: arrSubscriptionList.length,
+                       itemBuilder: (BuildContext context, int index) {
+                         return GestureDetector(
+                           onTap: (){
+                             setState(() {
+                               // isSelected = !isSelected;
+                               selectedvalue = arrSubscriptionList[index].subId.toString();
+                             });
+                           },
+                           child:Expanded(
+                             child:  Container(
+                               width: MediaQuery.of(context).size.width,
+                               margin: EdgeInsets.only(top:10,bottom: 10),
+                               alignment: Alignment.center,
+                               padding: EdgeInsets.only(left:30),
+                               decoration: BoxDecoration(
+                                   color: ColorResources.whiteColor,
+                                   borderRadius: BorderRadius.circular(8)
+                               ),
+                               child:  Container(
+                                 width: 500,
+                                 decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.circular(10),
+                                   color: selectedvalue == arrSubscriptionList[index].subId.toString()? Color(0xffD8FFF9): Color(0xffF5F5F5),
+                                   border: Border.all(
+                                     color: selectedvalue == arrSubscriptionList[index].subId.toString()? Color(0xff097969): Color(0xff707070),
+                                   ),
+                                 ),
+                                 padding: EdgeInsets.all(15.0),
+                                 child: Column(
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   mainAxisAlignment: MainAxisAlignment.start,
+                                   children: [
+                                     CustomText(text: "${arrSubscriptionList[index].price}/${arrSubscriptionList[index].duration}",fontSize: 20,),
+                                     SizedBox(height: 5,),
+                                     CustomText(text: arrSubscriptionList[index].discription,fontSize: 12,),
+                                   ],
+                                 ),
+                               ),
+                             ),
+                           )
+                         );
+                       }),
+                 ),
+
+               /* GestureDetector(
                   onTap: (){
                     setState(() {
                       selectedvalue = 'weekly';
@@ -157,7 +241,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ],
                     ),
                   ),
-                ),
+                ),*/
                 SizedBox(height: 20.0,),
                 CustomButton(
                   height: 45,
@@ -171,7 +255,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ],
             ),
         ),
-      ),
+
     );
   }
 }

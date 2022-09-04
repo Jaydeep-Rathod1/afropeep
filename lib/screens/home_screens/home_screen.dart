@@ -12,15 +12,15 @@ import 'package:afropeep/screens/profile_screens/myprofile_screen.dart';
 import 'package:afropeep/screens/profile_screens/profile_details_screen.dart';
 import 'package:afropeep/screens/match_screens/match_screen.dart';
 import 'package:afropeep/screens/settings_screen/settings_main_screen.dart';
+import 'package:afropeep/screens/survey/questions_screen.dart';
 import 'package:afropeep/screens/user_screens/user_screen.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   String title;
   HomeScreen({this.title}) ;
-
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -82,8 +82,19 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     _title = 'Swipe';
-  }
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setSharedValue();
+    });
+  }
+  setSharedValue()async{
+    print("called");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('userid', 82);
+    var userid =prefs.getInt('userid');
+    // var userid =82;
+    print("home user id = ${userid}");
+  }
   @override
   Widget build(BuildContext context) {
     return  Scaffold(

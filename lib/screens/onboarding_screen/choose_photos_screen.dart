@@ -13,6 +13,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/functions.dart';
 class ChoosePhotosScreen extends StatefulWidget {
 
   @override
@@ -168,30 +170,32 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
     );
   }
   insertImages()async{
-    setState(() {
-      isLoading = true;
-    });
+    Apploader(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userid = prefs.getInt('userid');
 
     if(imageList.length >= 3)
       {
+        // _dio.options.headers = {
+        //   'Content-type': 'multipart/form-data',
+        // };
         FormData data = FormData.fromMap({
           "user_id":userid.toString(),
-        for(int i=0;i<imageList.length;i++)
-          "photo_url${i+1}": await MultipartFile.fromFile(
-          imageList[i].path,
-          filename: imageList[i].path.split('/').last,
-          ),
-        });
-       await _dio.post(ADD_IMAGE,data: data).then((value)async {
-            print("called = ${value}");
-            setState(() {
-              isLoading = false;
-            });
-            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseInterestesScreen()));
-            // Navigator.pop(context);
+          // "user_id":"77",
+          'filecount':imageList.length.toString(),
+          for(int i=0;i<imageList.length;i++)
+            "photo_url${i+1}": await MultipartFile.fromFile(
+            imageList[i].path,
+            filename: imageList[i].path.split('/').last,
+            ),
           });
+        print(data.fields);
+         await _dio.post(ADD_IMAGE,data: data,options: Options(contentType: 'multipart/form-data')).then((value)async {
+              print("called here= ${value}");
+              RemoveAppLoader(context);
+              Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseInterestesScreen()));
+              // Navigator.pop(context);
+            });
         // imageList.forEach((element) {
         //   "photo_url${i}"
         //
@@ -199,7 +203,8 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
       }
   }
   GenrateImageCell(index){
-    if(index > 0)
+    print(index);
+    if(index >= 1)
       {
         return Stack(
           children: [
@@ -213,7 +218,7 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
               ),
               child:  ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
-                child: imageList.asMap().containsKey(index) ? Image.file(imageList[index],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
+                child: imageList.asMap().containsKey(index-1) ? Image.file(imageList[index-1],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
               ),
             ),
             Positioned(
@@ -222,14 +227,14 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
                 child: InkWell(
                   onTap: (){
                     // print(imageList.removeAt(index));
-                    imageList.removeAt(index);
+                    imageList.removeAt(index-1);
                     setState((){});
                   },
                   child: ClipOval(
                     child: Material(
                       color: Colors.white, // Button color
                       child: Container(
-                        child:imageList.asMap().containsKey(index) ? Icon(Icons.close,size: 16,):null,),
+                        child:imageList.asMap().containsKey(index-1) ? Icon(Icons.close,size: 16,):null,),
                     ),
                   ),
                 )
@@ -237,9 +242,7 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
           ],
         );
       }
-    else{
-      Container();
-    }
+
 
 
   }
@@ -266,6 +269,7 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
       source: ImageSource.gallery,
       maxWidth: 1800,
       maxHeight: 1800,
+      imageQuality: 60,
     );
     if (pickedFile != null) {
       setState(() {
@@ -278,10 +282,11 @@ class _ChoosePhotosScreenState extends State<ChoosePhotosScreen> {
   }
 
   _getFromCamera() async {
-   pickedFile = await ImagePicker.pickImage(
+    pickedFile = await ImagePicker.pickImage(
       source: ImageSource.camera,
       maxWidth: 1800,
       maxHeight: 1800,
+      imageQuality: 60,
     );
     if (pickedFile != null) {
       setState(() {

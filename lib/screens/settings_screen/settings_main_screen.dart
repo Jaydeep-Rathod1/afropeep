@@ -1,4 +1,5 @@
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/screens/authentication_screens/login_screen.dart';
 import 'package:afropeep/screens/home_screens/filter_screen.dart';
 import 'package:afropeep/screens/profile_screens/myprofile_screen.dart';
 import 'package:afropeep/screens/settings_screen/about_screen.dart';
@@ -10,7 +11,13 @@ import 'package:afropeep/screens/settings_screen/privacy_policy_screen.dart';
 import 'package:afropeep/screens/settings_screen/subscription_screen.dart';
 import 'package:afropeep/screens/settings_screen/terms_and_conditions_screen.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/constants.dart';
+import '../onboarding_screen/choose_mode_to_start_screen.dart';
 
 class SettingsMainScreen extends StatefulWidget {
   @override
@@ -18,6 +25,7 @@ class SettingsMainScreen extends StatefulWidget {
 }
 
 class _SettingsMainScreenState extends State<SettingsMainScreen> {
+  Dio _dio = Dio();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,7 +225,13 @@ class _SettingsMainScreenState extends State<SettingsMainScreen> {
               child: Column(
                 children: [
                   OutlinedButton(
-                    onPressed: (){},
+                    onPressed: ()async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      prefs.remove("userid");
+                      prefs.remove("isLogin");
+                      prefs.remove("isCompleteAllData");
+                      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
+                    },
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(29.0)),
                       side: BorderSide(width: 1.0, color: ColorResources.blackColor),
@@ -231,7 +245,24 @@ class _SettingsMainScreenState extends State<SettingsMainScreen> {
                   ),
                   SizedBox(height: 10,),
                   OutlinedButton(
-                    onPressed: (){},
+                    onPressed: ()async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      int userid = prefs.getInt('userid');
+                      prefs.setBool("isLogin", true);
+                      Map<String, String> params = Map();
+                      params['user_id'] = userid.toString();
+
+                      print(params);
+                      await _dio.post(DELETE_ACCOUNT,data: {"userid":userid}).then((value) {
+                        // var varJson = value.data;
+                        print("value = ${value.data["message"]}");
+                        if(value.statusCode == 200)
+                        {
+                          Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
+                          // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                        }
+                      });
+                    },
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(29.0)),
                       side: BorderSide(width: 1.0, color: Color(0xffFF0000)),

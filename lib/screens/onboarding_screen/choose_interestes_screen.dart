@@ -1,6 +1,7 @@
 
 import 'package:afropeep/models/user_models/interestes_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
+import 'package:afropeep/resouces/functions.dart';
 import 'package:afropeep/screens/facial_recognition_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
@@ -25,6 +26,7 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
   List<InterestModel> arrAllChoices = [];
   Dio _dio = Dio();
   getChoiceData()async {
+    Apploader(context);
     await _dio.get(GET_INTERSET).then((value) {
       var varJson = value.data as List;
       print(varJson);
@@ -32,6 +34,7 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
       {
         setState(() {
           arrAllChoices =varJson.map((e) =>InterestModel.fromJson(e)).toList();
+          RemoveAppLoader(context);
         });
       }
     });
@@ -70,7 +73,11 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getChoiceData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getChoiceData();
+      });
+    });
   }
 
   @override
@@ -169,7 +176,7 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
     print(params);
     if(selectedChoicesName.length >= 6)
       {
-        await _dio.post(UPDATE_USER,data: params).then((value) {
+        await _dio.post(UPDATE_USER1,data: params).then((value) {
           print("value = ${value}");
           if(value.statusCode == 200)
           {

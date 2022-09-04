@@ -89,7 +89,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       height: 45,
                       backgroundColor: ColorResources.blackColor,
                       onPressed: (){
-                        _isValidate();
+                        // _isValidate();
                         otpVerification();
 
                       },
@@ -115,26 +115,26 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   _isValidate(){
     setState(() {
       _otpController.text.isEmpty ?validOtpEmpty = true : validOtpEmpty = false;
-      (_otpController.text.isNotEmpty && _otpController.text.toString() !="123") ? validOtp = true : validOtp = false;
+      // (_otpController.text.isNotEmpty) ? validOtp = true : validOtp = false;
       // ()?validOtpTime = true:validOtpTime=false;
       // dropdownvalue.countryId == null ? validOtpEmpty = true:validOtpEmpty=false;
     });
-
   }
   otpVerification()async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     int userid = prefs.getInt('userid');
+    prefs.setBool("isLogin", true);
     Map<String, String> params = Map();
     params['user_id'] = userid.toString();
     params['otp'] = _otpController.text.toString();
-    print(params);
+
     await _dio.post(VERIFY_OTP,data: params).then((value) {
       // var varJson = value.data;
-      print("value = ${value.data["message"]}");
+
       if(value.statusCode == 200)
       {
-        
+
         Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
         // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
       }

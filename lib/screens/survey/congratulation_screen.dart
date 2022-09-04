@@ -1,15 +1,19 @@
 
+import 'dart:convert';
+
 import 'package:afropeep/resouces/color_resources.dart';
-import 'package:afropeep/screens/choose_your_location_screen.dart';
-import 'package:afropeep/screens/facial_recognition_screen.dart';
-import 'package:afropeep/screens/home_screens/home_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/constants.dart';
+import '../home_screens/home_screen.dart';
+
 
 class CongratulationScreen extends StatefulWidget {
 
@@ -18,7 +22,18 @@ class CongratulationScreen extends StatefulWidget {
 }
 
 class _CongratulationScreenState extends State<CongratulationScreen> {
-
+  var latitude;
+  var longitude;
+  Dio _dio = Dio();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _determinePosition().then((value) async {
+      latitude = value.latitude;
+      longitude = value.longitude;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,9 +86,27 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
                    child: CustomButton(
                      height: 45,
                      backgroundColor: ColorResources.blackColor,
-                     onPressed: (){
+                     onPressed: ()async{
                        // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseYourLocationScreen()));
-                       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+                       SharedPreferences prefs = await SharedPreferences.getInstance();
+                       prefs.setBool("isCompleteAllData", true);
+                      var userid = prefs.getInt('userid');
+                      FormData data = FormData.fromMap({
+                        "user_id":userid,
+                        'lattitude':longitude,
+                        "longitude":latitude
+                      });
+
+                       print(data);
+                       await _dio.post(UPDATE_USER1,data: data).then((value) {
+                         // var varJson = value.data;
+                         print("value = ${value}");
+                         if(value.statusCode == 200)
+                         {
+                           prefs.setBool('loginvalid', true);
+                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+                         }
+                       });
 
                      },
                      buttonText: 'Lets Swipe',
@@ -91,35 +124,56 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
     );
 
   }
-  final geolocator =
-  Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
-  Position _currentPosition;
-  String currentAddress = "";
-  /*void getCurrentLocation() {
-    if(Geolocator.requestPermission)
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
+  Future<Position> _determinePosition() async {
+    //print("Permission block ");
+    bool serviceEnabled;
+    LocationPermission permission;
 
-      getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
-  }*/
-  void getAddressFromLatLng() async {
-    try {
-      List<Placemark> p = await placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-      Placemark place = p[0];
 
-      setState(() {
-        currentAddress =
-        "${place.thoroughfare},${place.subThoroughfare},${place.name}, ${place.subLocality}";
-      });
-    } catch (e) {
-      print(e);
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+
+      return Future.error('Location services are disabled.');
     }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _determinePosition();
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      // displayDialog(
+      //     context,
+      //     "Location permissions are permanently denied, we cannot request permissions. You Have To Go to App Seeting And Allow Permission of Location",
+      //     '');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(""),
+            content: Text("Location permissions are permanently denied, we cannot request permissions. You Have To Go to App Seeting And Allow Permission of Location."),
+            actions: [
+              TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              ),
+            ],
+          );
+        },
+      );
+
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return position;
   }
 }

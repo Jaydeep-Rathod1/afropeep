@@ -8,7 +8,11 @@ import 'package:afropeep/widgets/custom_text.dart';
 import 'package:blur/blur.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../resouces/functions.dart';
 
 class MatchScreen extends StatefulWidget {
   @override
@@ -18,16 +22,27 @@ class MatchScreen extends StatefulWidget {
 class _MatchScreenState extends State<MatchScreen> {
   Dio _dio = Dio();
   List<GetMatchRequestModel> arrAllMatchRequest = [];
+  BuildContext _mainContex;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-   getMatchList();
+    _mainContex = this.context;
+// print(GetAddressFromLatLong(21.211739698046472, 72.78160081534332).runtimeType);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getMatchList();
+
+      });
+    });
   }
   getMatchList()async{
+    // Apploader(context);
+    Apploader(_mainContex);
     Map params = Map();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userid =prefs.getInt('userid');
+    print(userid);
     params['userid'] = userid;
     await _dio.post(GET_MATCH_LIST,data: jsonEncode(params)).then((value) {
       var varJson = value.data as List;
@@ -36,7 +51,9 @@ class _MatchScreenState extends State<MatchScreen> {
       {
         setState(() {
           arrAllMatchRequest =varJson.map((e) =>GetMatchRequestModel.fromJson(e)).toList();
+          RemoveAppLoader(_mainContex);
         });
+
       }
     });
   }
@@ -45,15 +62,12 @@ class _MatchScreenState extends State<MatchScreen> {
     return Padding(
       padding: EdgeInsets.only(left:20,right: 20,top: 20,bottom: 0.0),
       child: GridView.builder(
-        // crossAxisCount: 2,
-        // crossAxisSpacing: 10.0,
-        // mainAxisSpacing: 10.0,
-        // shrinkWrap: true,
+
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
             childAspectRatio: 2 / 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10),
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 15),
         itemCount: arrAllMatchRequest.length,
         itemBuilder: (BuildContext context,index){
           return  Container(
@@ -61,7 +75,7 @@ class _MatchScreenState extends State<MatchScreen> {
             width: 190,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/match_1.png'),
+                image:arrAllMatchRequest[index].photoUrl1 != null? NetworkImage(GET_IMAGES_LINK+arrAllMatchRequest[index].photoUrl1):AssetImage('assets/icons/img_user.png'),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(10),
@@ -83,8 +97,8 @@ class _MatchScreenState extends State<MatchScreen> {
                       children: [
                         Icon(Icons.location_on_outlined,size: 12.0,color: ColorResources.whiteColor,),
                         SizedBox(width: 5.0,),
-                        CustomText(text: 'Ottawa, Canada ',fontSize: 10.0,color: ColorResources.whiteColor,),
-
+                        // CustomText(text: 'Ottawa, Canada ',fontSize: 10.0,color: ColorResources.whiteColor,),
+                        // GetAddressFromLatLong(21.211739698046472, 72.78160081534332),
                       ],
                     )
                 ),
@@ -114,8 +128,18 @@ class _MatchScreenState extends State<MatchScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: (){
+                          onTap: ()async{
                             var requestid = arrAllMatchRequest[index].reqId;
+                            print(requestid);
+                            Map params = Map();
+                            params['requestid'] =requestid ;
+                            params['status'] = "accept";
+                            await _dio.post(REQUEST_REJECT_MATCH,data: jsonEncode(params)).then((value)async {
+                              if(value.statusCode == 200)
+                              {
+                                await getMatchList();
+                              }
+                            });
                           },
                           child:Align(
                             alignment: Alignment.center,
@@ -137,6 +161,7 @@ class _MatchScreenState extends State<MatchScreen> {
                         InkWell(
                           onTap: ()async{
                             var requestid = arrAllMatchRequest[index].reqId;
+                            print(requestid);
                             Map params = Map();
                             params['requestid'] =requestid ;
                             params['status'] = "reject";
@@ -184,5 +209,12 @@ class _MatchScreenState extends State<MatchScreen> {
         },
       ),
     );
+  }
+  GetAddressFromLatLong(latitude,longitude)async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+    print(placemarks);
+    Placemark place = placemarks[0];
+     var Address = await '${place.subLocality}, ${place.locality}';
+    return CustomText(text: Address,fontSize: 10.0,color: ColorResources.whiteColor,);
   }
 }

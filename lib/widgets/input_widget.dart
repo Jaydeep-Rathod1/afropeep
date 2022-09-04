@@ -227,26 +227,30 @@ class _InputWidgetState extends State<InputWidget> {
         "message":message,
         "messagetype":"text",
         "timestamp":myTimeStamp
+      }).then((value)async{
+        await FirebaseFirestore.instance.collection("Users")
+            .doc(receiverid)
+            .collection("Chats")
+            .doc(senderid)
+            .collection("Messages")
+            .add({
+          "senderid":senderid,
+          "receiverid":receiverid,
+          "message":message,
+          "messagetype":"text",
+          "timestamp":myTimeStamp
+        }).then((value){
+          _inputKeyboradController.text ='';
+          // _scrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+          _scrollController.animateTo(
+              _scrollController
+                  .position.maxScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeOut);
+        });
       });
-      await FirebaseFirestore.instance.collection("Users")
-          .doc(receiverid)
-          .collection("Chats")
-          .doc(senderid)
-          .collection("Messages")
-          .add({
-        "senderid":senderid,
-        "receiverid":receiverid,
-        "message":message,
-        "messagetype":"text",
-        "timestamp":myTimeStamp
-      });
-      _inputKeyboradController.text ='';
-      // _scrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      _scrollController.animateTo(
-          _scrollController
-              .position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut);
+
+
     }else{
       Fluttertoast.showToast(msg: 'Nothing to send');
     }

@@ -16,7 +16,7 @@ class _MainTinderCardState extends State<MainTinderCard> {
   GlobalKey _pointerKey = new GlobalKey();
   ScrollController scrollController = ScrollController();
   var showdata = false;
-  _checkDrag(Offset position, bool up) {
+/*  _checkDrag(Offset position, bool up) {
     if (!up) {
       // find your widget
       RenderBox box = _pointerKey.currentContext.findRenderObject();
@@ -40,7 +40,7 @@ class _MainTinderCardState extends State<MainTinderCard> {
         _dragOverMap = false;
       });
     }
-  }
+  }*/
   @override
   void initState() {
     // TODO: implement initState
@@ -73,8 +73,7 @@ class _MainTinderCardState extends State<MainTinderCard> {
                        alignment: Alignment.center,
                        child: buildCards(),
                      ),
-
-                    showdata ?Column(
+                    /*Column(
                       children: [
                         SizedBox(height: 20,),
                         CustomText(text: 'Basic',fontSize: 14,),
@@ -306,7 +305,7 @@ class _MainTinderCardState extends State<MainTinderCard> {
                             )
                         )
                       ],
-                    ):Container(),
+                    ),*/
                     SizedBox(height: 20,),
                   ]
               ),
@@ -361,7 +360,8 @@ class _MainTinderCardState extends State<MainTinderCard> {
             }).toList(),
           ),
         );
-        /*SingleChildScrollView(
+        /*
+        SingleChildScrollView(
           child: Column(
             children: [
               Container(

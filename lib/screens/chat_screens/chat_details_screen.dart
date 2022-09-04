@@ -229,7 +229,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                   }
                   else
                   {
-                    return Center(child: CircularProgressIndicator(),);
+                    return Expanded(child: Center(child: CircularProgressIndicator(),));
                   }
                 }
             ),
