@@ -24,7 +24,7 @@ class PhoneNumberScreen extends StatefulWidget {
 }
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
-  Dio _dio = Dio();
+  Dio _dio =new Dio();
   CountryModel dropdownvalue;
   // List of items in our dropdown menu
   BuildContext _mainContex;
@@ -44,6 +44,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   List<CountryModel> arrAllCountryList = [];
   List<CountryModel> arrCountryList = [];
   getCountryCode()async {
+    print("called");
     Apploader(_mainContex);
 
     await _dio.get(GET_COUNTRY).then((value) {
@@ -208,8 +209,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                            SharedPreferences prefs = await SharedPreferences.getInstance();
                            prefs.setInt('userid', userid);
                            var otp = value.data['otp'].toString();
+                           print(otp);
                            // SendOtpRequest(userid,otp);
-                           Navigator.pushReplacement(context,PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+                           Navigator.pushReplacement(context,PageTransition(type: PageTransitionType.rightToLeft, child:  OtpVerificationScreen(userotp:otp)));
                          }
 
                        }

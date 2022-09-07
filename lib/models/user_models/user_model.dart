@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class UserModel {
   int uerId;
   int countryId;
@@ -5,8 +7,11 @@ class UserModel {
   int modeId;
   String gender;
   String firstname;
+  String password;
+  String changepass;
   String lastname;
   String birthDate;
+  String age;
   String intrest;
   String lookingFor;
   String address;
@@ -15,11 +20,7 @@ class UserModel {
   String status;
   String regiDatetime;
   String emailId;
-  String about;
-  String height;
-  String region;
   String distance;
-  String profession;
   String createdAt;
   String updatedAt;
   String countryName;
@@ -31,10 +32,14 @@ class UserModel {
   String photoUrl2;
   String photoUrl3;
   String photoUrl4;
-  String photoUrl5;
-  String photoUrl6;
+  Null photoUrl5;
+  Null photoUrl6;
   String adddatetime;
   int userId;
+  String bio;
+  String religion;
+  String occupation;
+  String height;
 
   UserModel(
       {this.uerId,
@@ -43,8 +48,11 @@ class UserModel {
         this.modeId,
         this.gender,
         this.firstname,
+        this.password,
+        this.changepass,
         this.lastname,
         this.birthDate,
+        this.age,
         this.intrest,
         this.lookingFor,
         this.address,
@@ -53,11 +61,7 @@ class UserModel {
         this.status,
         this.regiDatetime,
         this.emailId,
-        this.about,
-        this.height,
-        this.region,
         this.distance,
-        this.profession,
         this.createdAt,
         this.updatedAt,
         this.countryName,
@@ -72,7 +76,11 @@ class UserModel {
         this.photoUrl5,
         this.photoUrl6,
         this.adddatetime,
-        this.userId});
+        this.userId,
+        this.bio,
+        this.religion,
+        this.occupation,
+        this.height});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     uerId = json['uer_id'];
@@ -81,8 +89,11 @@ class UserModel {
     modeId = json['mode_id'];
     gender = json['gender'];
     firstname = json['firstname'];
+    password = json['password'];
+    changepass = json['changepass'];
     lastname = json['lastname'];
     birthDate = json['birth_date'];
+    age = json['age'];
     intrest = json['intrest'];
     lookingFor = json['looking_for'];
     address = json['address'];
@@ -91,11 +102,7 @@ class UserModel {
     status = json['status'];
     regiDatetime = json['regi_datetime'];
     emailId = json['email_id'];
-    about = json['about'];
-    height = json['height'];
-    region = json['region'];
     distance = json['distance'];
-    profession = json['profession'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     countryName = json['country_name'];
@@ -111,6 +118,10 @@ class UserModel {
     photoUrl6 = json['photo_url6'];
     adddatetime = json['adddatetime'];
     userId = json['user_id'];
+    bio = json['bio'];
+    religion = json['religion'];
+    occupation = json['Occupation'];
+    height = json['height'];
   }
 
   Map<String, dynamic> toJson() {
@@ -121,8 +132,11 @@ class UserModel {
     data['mode_id'] = this.modeId;
     data['gender'] = this.gender;
     data['firstname'] = this.firstname;
+    data['password'] = this.password;
+    data['changepass'] = this.changepass;
     data['lastname'] = this.lastname;
     data['birth_date'] = this.birthDate;
+    data['age'] = this.age;
     data['intrest'] = this.intrest;
     data['looking_for'] = this.lookingFor;
     data['address'] = this.address;
@@ -131,11 +145,7 @@ class UserModel {
     data['status'] = this.status;
     data['regi_datetime'] = this.regiDatetime;
     data['email_id'] = this.emailId;
-    data['about'] = this.about;
-    data['height'] = this.height;
-    data['region'] = this.region;
     data['distance'] = this.distance;
-    data['profession'] = this.profession;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['country_name'] = this.countryName;
@@ -151,6 +161,10 @@ class UserModel {
     data['photo_url6'] = this.photoUrl6;
     data['adddatetime'] = this.adddatetime;
     data['user_id'] = this.userId;
+    data['bio'] = this.bio;
+    data['religion'] = this.religion;
+    data['Occupation'] = this.occupation;
+    data['height'] = this.height;
     return data;
   }
 }

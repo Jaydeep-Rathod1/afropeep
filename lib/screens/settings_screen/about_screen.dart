@@ -30,6 +30,7 @@ class _AboutScreenState extends State<AboutScreen> {
         print("data status = ${value}");
         var varJson = value.data;
         print(varJson['setting_id']);
+
         setState(() {
           aboutData = varJson;
           RemoveAppLoader(_mainContex);
@@ -78,7 +79,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 SizedBox(height: 30.0,),
                 CustomText(
-                  text: aboutData!= null && aboutData.isNotEmpty ? aboutData['setting_value']:'',
+                  text: aboutData!= null && aboutData.isNotEmpty ? removeHtmlTagsFromString(aboutData['setting_value']):'',
                   fontSize: 12,
                   height:1.5,
                 ),
@@ -90,4 +91,5 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
     );
   }
+
 }

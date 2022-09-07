@@ -55,6 +55,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       {
         setState(() {
           arrAllUser =SingleUserModel.fromJson(value.data);
+          // _currentPassword.text = arrAllUser.password.toString();
           RemoveAppLoader(_mainContex);
         });
 
@@ -172,7 +173,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             print(value);
             if(value.statusCode == 200)
             {
-                Navigator.pushReplacement(context,PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+                Navigator.of(context).pop();
+                Navigator.push(context,PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
             }
 
 

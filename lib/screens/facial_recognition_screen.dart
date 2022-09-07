@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 class FacialRecognitionScreen extends StatefulWidget {
+  String choices;
+  FacialRecognitionScreen({this.choices});
   @override
   State<FacialRecognitionScreen> createState() => _FacialRecognitionScreenState();
 }
@@ -18,7 +20,7 @@ class _FacialRecognitionScreenState extends State<FacialRecognitionScreen> {
         height: MediaQuery.of(context).size.height,
         child: GestureDetector(
           onTap: (){
-            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: LookingForScreen()));
+            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: LookingForScreen(choices:widget.choices)));
           },
           child: Image.asset("assets/images/Facial_Recognition.png",
             height: MediaQuery.of(context).size.height,

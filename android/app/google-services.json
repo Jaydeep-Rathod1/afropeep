@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "216095815180",
-    "project_id": "afropeep-90974",
-    "storage_bucket": "afropeep-90974.appspot.com"
+    "project_number": "136553608266",
+    "project_id": "afropeepproject",
+    "storage_bucket": "afropeepproject.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:216095815180:android:431e0ed20442e67c71a029",
+        "mobilesdk_app_id": "1:136553608266:android:86a55234bcefc72008a2b3",
         "android_client_info": {
           "package_name": "com.example.afropeep"
         }
       },
       "oauth_client": [
         {
-          "client_id": "216095815180-98k64a6nsmhachqt08820e7hfj17kfc5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.afropeep",
-            "certificate_hash": "5194f9163e8e7d5d521cc6c2a1917d4b4674b905"
-          }
-        },
-        {
-          "client_id": "216095815180-do59ft3el3ch67di4utoev9a8f6v2hhq.apps.googleusercontent.com",
+          "client_id": "136553608266-kssf32bva1lak6irbjlc5f88ia6gsumm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBzA-ZdZGwjJE79D6zDXf2sTUWQpcNkErc"
+          "current_key": "AIzaSyD0EPXkTjqN9olLXnrZ8rwBfunHynxrcZM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "216095815180-do59ft3el3ch67di4utoev9a8f6v2hhq.apps.googleusercontent.com",
+              "client_id": "136553608266-kssf32bva1lak6irbjlc5f88ia6gsumm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -32,7 +32,6 @@ class _MatchScreenState extends State<MatchScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
         getMatchList();
-
       });
     });
   }
@@ -133,7 +132,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             print(requestid);
                             Map params = Map();
                             params['requestid'] =requestid ;
-                            params['status'] = "accept";
+                            params['status'] = "like";
                             await _dio.post(REQUEST_REJECT_MATCH,data: jsonEncode(params)).then((value)async {
                               if(value.statusCode == 200)
                               {
@@ -164,7 +163,8 @@ class _MatchScreenState extends State<MatchScreen> {
                             print(requestid);
                             Map params = Map();
                             params['requestid'] =requestid ;
-                            params['status'] = "reject";
+                            params['status'] = "dislike";
+
                             await _dio.post(REQUEST_REJECT_MATCH,data: jsonEncode(params)).then((value)async {
                               if(value.statusCode == 200)
                                 {

@@ -94,9 +94,11 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
                       FormData data = FormData.fromMap({
                         "user_id":userid,
                         'lattitude':longitude,
-                        "longitude":latitude
+                        "longitude":latitude,
+                        "address":"demo",
                       });
-
+                      print(longitude);
+                      print(latitude);
                        print(data);
                        await _dio.post(UPDATE_USER1,data: data).then((value) {
                          // var varJson = value.data;

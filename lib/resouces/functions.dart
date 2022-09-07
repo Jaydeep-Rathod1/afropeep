@@ -48,45 +48,8 @@ void RemoveAppLoader(BuildContext context) {
   }
   // Navigator.of(context, rootNavigator: false).pop('dialog');
 }
-
-/*
-void Apploader(BuildContext context) {
-  showGeneralDialog(
-    context: context,
-    useRootNavigator: false,
-    barrierDismissible: false,
-    pageBuilder: (_, __, ___) {
-      _appLoaderContex = context;
-      return Align(
-        alignment: Alignment.center,
-        child: Container(
-          width: 90,
-          height: 90,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SizedBox.expand(
-                child: Image.asset('assets/images/loading.gif',
-                    height: 80, width: 80)),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.deepOrange, width: 2),
-            borderRadius: BorderRadius.circular(45),
-          ),
-        ),
-      );
-    },
-  ).then((value) {
-    // if (Commonmessage != '') {
-    //   displayDialog(context, Commonmessage, '');
-    //   Commonmessage = '';
-    // }
-  });
+removeHtmlTagsFromString(String html){
+  RegExp exp = RegExp(r"<[^>]*>",multiLine: true,caseSensitive: true);
+  String parsedstring1 = html.replaceAll(exp, '');
+  return parsedstring1;
 }
-
-void RemoveAppLoader(BuildContext context) {
-  if (_appLoaderContex != null) {
-    Navigator.of(_appLoaderContex).pop();
-  }
-  // Navigator.of(context, rootNavigator: false).pop('dialog');
-}*/

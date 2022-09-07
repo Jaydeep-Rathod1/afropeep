@@ -140,7 +140,7 @@ class _InputWidgetState extends State<InputWidget> {
                               child: GestureDetector(
                                 child: Image.asset('assets/icons/send_icon.png',height: 15,width: 15,),
                                 onTap: () {
-                                 sendMessage();
+                                 // sendMessage();
                                 },
                               ),
                             ),
@@ -203,7 +203,7 @@ class _InputWidgetState extends State<InputWidget> {
       ),
     );
   }
-  sendMessage()async{
+  /*sendMessage()async{
     SharedPreferences prefs =
         await SharedPreferences.getInstance();
     var senderid = prefs.getInt("userid").toString();
@@ -255,7 +255,7 @@ class _InputWidgetState extends State<InputWidget> {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
     print("Message Sent");
-  }
+  }*/
   _onEmojiSelected(Emoji emoji) {
     _inputKeyboradController
       ..text += emoji.emoji

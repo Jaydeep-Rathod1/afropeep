@@ -150,7 +150,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            StreamBuilder(
+            /*StreamBuilder(
                 stream: FirebaseFirestore.instance.collection("Users").doc(senderid).collection("Chats").doc(receiverid).collection("Messages").orderBy('timestamp').snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
                   if(snapshot.hasData)
@@ -185,14 +185,14 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                                         ?ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
 
-                                      /*child: CachedNetworkImage(
+                                      *//*child: CachedNetworkImage(
                                         height:250 ,
                                         width: 200,
                                         fit: BoxFit.cover,
                                         imageUrl: document['message'],
                                         placeholder: (context, url) => CircularProgressIndicator(),
                                         errorWidget: (context, url, error) => Icon(Icons.error),
-                                      ),*/
+                                      ),*//*
                                       child: Container(),
                                     ):Text(document["message"], style: TextStyle(fontSize: 12,color: ColorResources.whiteColor),),
                                   ),
@@ -232,7 +232,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                     return Expanded(child: Center(child: CircularProgressIndicator(),));
                   }
                 }
-            ),
+            ),*/
             InputWidget(),
 
             // Offstage(

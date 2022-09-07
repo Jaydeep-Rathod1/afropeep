@@ -11,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../resouces/constants.dart';
 
 class LookingForScreen extends StatefulWidget {
-
+String choices;
+LookingForScreen({this.choices});
   @override
   State<LookingForScreen> createState() => _LookingForScreenState();
 }
@@ -286,7 +287,7 @@ class _LookingForScreenState extends State<LookingForScreen> {
     Map<String, String> params = Map();
     params['user_id'] = userid.toString();
     params['looking_for'] = value;
-
+    params['intrest'] = widget.choices;
     print(params);
     await _dio.post(UPDATE_USER1,data: params).then((value) {
       print("value = ${value}");

@@ -29,9 +29,9 @@ void main()async {
   // WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  /*await Firebase.initializeApp();
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;*/
 
   runApp(const MyApp());
 }

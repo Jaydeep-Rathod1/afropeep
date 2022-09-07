@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   setSharedValue()async{
     print("called");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('userid', 82);
+    // prefs.setInt('userid', 78);
     var userid =prefs.getInt('userid');
     // var userid =82;
     print("home user id = ${userid}");

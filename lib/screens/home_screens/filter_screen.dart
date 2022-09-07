@@ -1,10 +1,19 @@
 import 'package:afropeep/models/user_models/user_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/screens/home_screens/home_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/user_models/modetostart_model.dart';
+import '../../provider/card_provider.dart';
+import '../../resouces/functions.dart';
+import '../../widgets/custom_textfield.dart';
 
 class FilterScreen extends StatefulWidget {
   @override
@@ -20,14 +29,41 @@ class _FilterScreenState extends State<FilterScreen> {
   double high = 18.0;
   double km = 10;
   String dropdownvalue = 'Choose Natonality';
+  TextEditingController _nationalityTxt = TextEditingController();
+  BuildContext _mainContext;
   // List of items in our dropdown menu
-  var items = [
-    'Choose Natonality',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _mainContext = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        getModeToStartList();
+      });
+    });
+  }
+  List<ModeToStartModel> arrAllModeToStartList = [];
+  getModeToStartList()async{
+    Apploader(context);
+    await _dio.get(GET_MODE).then((value) {
+      var varJson = value.data as List;
+      print(varJson);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrAllModeToStartList =varJson.map((e) =>ModeToStartModel.fromJson(e)).toList();
+          RemoveAppLoader(context);
+          // dropdownvalue = arrAllCountryList[0];
+        });
+        print("aal = ${arrAllModeToStartList}");
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +94,7 @@ class _FilterScreenState extends State<FilterScreen> {
             children: [
               CustomText(text: 'Who you want to date',fontSize: 12,),
               SizedBox(height: 17,),
+
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -67,79 +104,46 @@ class _FilterScreenState extends State<FilterScreen> {
                   padding: EdgeInsets.all(0),
                   child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: (){
-                          setState(() {
-                            value = 'Men';
-                          });
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(left:10,right: 10,top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(text: 'Men',fontSize: 14,),
-                              value == 'Men'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
-                            ],
-                          ),
-                        )
-                        // child: ListTile(
-                        //   title: Text('Men'),
-                        //   trailing:
-                        //   value == 'Men'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
-                        // ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left:10,right: 10),
-                        child:Divider()
-                      ),
-                      GestureDetector(
-                          onTap: (){
+                     ...arrAllModeToStartList.map((e) {
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: (){
                             setState(() {
-                              value = 'Women';
+                              value = e.modeId.toString();
                             });
                           },
-                          child: Padding(
-                            padding: EdgeInsets.only(left:10,right: 10,),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                CustomText(text: 'Women',fontSize: 14,),
-                                value == 'Women'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
-                              ],
+                           child: Padding(
+                           padding: EdgeInsets.only(left:10,right: 10,top: 10),
+                           child: Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                           CustomText(text: e.modeName,fontSize: 14,),
+                           value == e.modeId.toString()? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
+                           ],
+                           ),
+                           )
+                           // child: ListTile(
+                           //   title: Text('Men'),
+                           //   trailing:
+                           //   value == 'Men'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
+                           // ),
+                           ),
+                            e.modeId != 3? Padding(
+                                padding: EdgeInsets.only(left:10,right: 10),
+                                child:Divider()
+                            ):Padding(
+                                padding: EdgeInsets.only(bottom:10),
+
                             ),
-                          )
-                        // child: ListTile(
-                        //   title: Text('Men'),
-                        //   trailing:
-                        //   value == 'Men'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
-                        // ),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(left:10,right: 10),
-                          child:Divider()
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          setState(() {
-                            value = 'Both';
-                          });
-                        },
-                            child: Padding(
-                              padding: EdgeInsets.only(left:10,right: 10,bottom: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CustomText(text: 'Both',fontSize: 14,),
-                                  value == 'Both'? Icon(Icons.check_circle ,color: Colors.black,) :Icon(Icons.circle_outlined ,color: Colors.black,),
-                                ],
-                              ),
-                            )
-                      ),
+                          ],
+                        );
+                      }).toList(),
                     ],
                   ),
                 )
               ),
+
               SizedBox(height: 20,),
               CustomText(text: 'Age',fontSize: 12,),
               SizedBox(height: 17,),
@@ -192,7 +196,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       padding: EdgeInsets.only(left:10),
                         child:CustomText(text: 'Up to 26Km ',fontSize: 12,),),
                         Slider(
-                          label: "Select Age",
+                          label: "Select Km",
                           value: km,
                           onChanged: (value) {
                             setState(() {
@@ -207,7 +211,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   )
               ),
               SizedBox(height: 20,),
-               Container(
+              /* Container(
                  height: 40,
                  width: MediaQuery.of(context).size.width,
                  padding: EdgeInsets.only(left: 20,right: 10),
@@ -233,7 +237,8 @@ class _FilterScreenState extends State<FilterScreen> {
                      },
                    ),
                  ),
-               ),
+               ),*/
+              CustomTextField(controller: _nationalityTxt,fontSize: 14,hintText: 'Enter Nationality',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
               SizedBox(height: 20,),
             ],
           ),
@@ -279,15 +284,20 @@ class _FilterScreenState extends State<FilterScreen> {
   }
   List<UserModel> arrAllCountryList= [];
   getFilteredUser()async {
-    await _dio.get(FILTER_USER).then((value) {
-      var varJson = value.data as List;
-      print(varJson);
-      if(value.statusCode == 200)
-      {
-        setState(() {
-          arrAllCountryList =varJson.map((e) =>UserModel.fromJson(e)).toList();
-        });
-      }
+    var datewho = value;
+    var kmnew = km.round();
+    var minage =low.round();
+    var maxage =high.round();
+    var nationality = _nationalityTxt.text.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userid =prefs.getInt('userid').toString();
+    print(datewho);
+    print(kmnew);
+    print(minage);
+    print(maxage);
+    var isfilter= true;
+    Provider.of<CardProvider>(context, listen: false).getCardImages(datewho,kmnew,minage,maxage,nationality,isfilter).then((value){
+      Navigator.push(context,PageTransition(type: PageTransitionType.rightToLeft, child:  HomeScreen()));
     });
   }
 }

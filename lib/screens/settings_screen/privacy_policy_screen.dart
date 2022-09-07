@@ -65,13 +65,11 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           child: Column(
             children: [
               CustomText(
-                text: privacyData!= null && privacyData.isNotEmpty ? privacyData['setting_value']:'',
+                text: privacyData!= null && privacyData.isNotEmpty ? removeHtmlTagsFromString(privacyData['setting_value']):'',
                 fontSize: 12,
                 height:1.5,
               ),
               SizedBox(height: 10,),
-
-
             ],
           ),
         ),

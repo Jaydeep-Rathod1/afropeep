@@ -1,8 +1,10 @@
 import 'package:afropeep/models/event_models/event_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/resouces/functions.dart';
 import 'package:afropeep/screens/event_screens/event_details_screen.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,14 +19,19 @@ class _MyEventScreenState extends State<MyEventScreen> {
   List<EventModel> arrAllMyEventList = [];
   List<EventModel> arrMyEventList = [];
   Dio _dio = Dio();
+  BuildContext _mainContex;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await getMyEventList();
+    });
 
-    getMyEventList();
   }
   getMyEventList() async{
+    Apploader(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userid = prefs.getInt('userid');
     print("user = ${userid}");
@@ -37,8 +44,14 @@ class _MyEventScreenState extends State<MyEventScreen> {
          {
            setState(() {
              arrAllMyEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+             RemoveAppLoader(context);
            });
          }
+       else{
+         setState(() {
+           RemoveAppLoader(context);
+         });
+       }
       }
     });
   }
@@ -46,7 +59,7 @@ class _MyEventScreenState extends State<MyEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height, //height of TabBarView
+      height: MediaQuery.of(context).size.height/1.32,//height of TabBarView
       child: Column(
         children: [
           Expanded(
@@ -61,7 +74,7 @@ class _MyEventScreenState extends State<MyEventScreen> {
                         },
                         child: Stack(
                           children: [
-                            ClipRRect(
+                            /*ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Container(
                                   child: Image.asset(
@@ -69,6 +82,33 @@ class _MyEventScreenState extends State<MyEventScreen> {
                                     height: MediaQuery.of(context).size.height/4.5,
                                     width: MediaQuery.of(context).size.width,
                                     fit: BoxFit.cover,
+                                  ),
+                                )
+                            ),*/
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Container(
+                                  child: CachedNetworkImage(
+                                    imageUrl: GET_EVENT_IMAGES_LINK+arrAllMyEventList[index].eventImg,
+                                    imageBuilder: (context, imageProvider) => Container(
+                                      height: MediaQuery.of(context).size.height/4.5,
+                                      width: MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage( //image size fill
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    placeholder: (context, url) => Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(10),
+                                      child: CircularProgressIndicator(
+                                        color: ColorResources.primaryColor,
+                                      ), // you can add pre loader iamge as well to show loading.
+                                    ), //show progress  while loading image
+                                    errorWidget: (context, url, error) => Image.asset("assets/images/noimage.png"),
+                                    //show no iamge availalbe image on error laoding
                                   ),
                                 )
                             ),

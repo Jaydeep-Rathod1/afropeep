@@ -65,7 +65,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             child: Column(
               children: [
                 CustomText(
-                  text: termsAndConditionData!= null && termsAndConditionData.isNotEmpty ? termsAndConditionData['setting_value']:'',
+                  text: termsAndConditionData!= null && termsAndConditionData.isNotEmpty ? removeHtmlTagsFromString(termsAndConditionData['setting_value']):'',
                   fontSize: 12,
                   height:1.5,
                 ),

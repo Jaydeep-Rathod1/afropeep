@@ -176,13 +176,14 @@ class _ChooseInterestesScreenState extends State<ChooseInterestesScreen> {
     print(params);
     if(selectedChoicesName.length >= 6)
       {
-        await _dio.post(UPDATE_USER1,data: params).then((value) {
-          print("value = ${value}");
-          if(value.statusCode == 200)
-          {
-            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen()));
-          }
-        });
+        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen(choices:selectedChoicesName.toString())));
+        // await _dio.post(UPDATE_USER1,data: params).then((value) {
+        //   print("value = ${value}");
+        //   if(value.statusCode == 200)
+        //   {
+        //     Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: FacialRecognitionScreen()));
+        //   }
+        // });
       }
     else{
       setState(() {

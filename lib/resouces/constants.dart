@@ -29,6 +29,7 @@ const REQUEST_SEND_MATCH = BASE_URL+"requestsend";
 const GET_MATCH_LIST = BASE_URL+"receiverequest";
 const REQUEST_REJECT_MATCH = BASE_URL+"statusrequest";
 const GET_IMAGES_LINK = "https://dazzling-gates.62-151-182-243.plesk.page/uploads/userimages/";
+const GET_EVENT_IMAGES_LINK = "https://dazzling-gates.62-151-182-243.plesk.page/uploads/event/";
 
 const DELETE_ACCOUNT = BASE_URL+"deleteaccount";
 const BLOCK_LIST = BASE_URL +"blocklist";

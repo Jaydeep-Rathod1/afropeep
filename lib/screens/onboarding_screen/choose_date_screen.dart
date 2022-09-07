@@ -6,6 +6,7 @@ import 'package:afropeep/screens/onboarding_screen/choose_photos_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/custom_textfield.dart';
+import 'package:age_calculator/age_calculator.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
   bool isValidateDate = false;
   Dio _dio = Dio();
   var newdate;
+  DateTime newpickedDate;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,6 +194,11 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
     );
   }
   insertUserData() async{
+    DateTime birthday = newpickedDate;
+    DateDuration duration;
+    duration = AgeCalculator.age(newpickedDate);
+
+    print(duration.years);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userid = prefs.getInt('userid');
     Map<String, String> params = Map();
@@ -201,7 +208,8 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
     params['firstname'] = widget.firstName.toString();
     params['lastname'] = widget.lastName.toString();
     params['birth_date'] = newdate;
-    print(params);
+    params['age'] =duration.years.toString();
+
 
     await _dio.post(UPDATE_USER,data: params).then((value) {
       print("value = ${value}");
@@ -219,6 +227,7 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
         //DateTime.now() - not to allow to choose before today.
         lastDate: DateTime(2100));
     if (pickedDate != null) {
+      newpickedDate = pickedDate;
       String date =
       DateFormat('dd').format(pickedDate);
       String month =

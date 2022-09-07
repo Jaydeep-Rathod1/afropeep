@@ -2,6 +2,7 @@
 
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
+import 'package:afropeep/screens/home_screens/home_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/choose_mode_to_start_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:afropeep/widgets/custom_button.dart';
@@ -9,11 +10,13 @@ import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/custom_textfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({Key key}) : super(key: key);
+  String userotp;
+  OtpVerificationScreen({this.userotp});
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
@@ -25,6 +28,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("otp = ${widget.userotp}");
+    Fluttertoast.showToast(
+        msg: "${widget.userotp}",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: ColorResources.whiteColor,
+        textColor: ColorResources.primaryColor,
+        fontSize: 16.0
+    );
   }
 
   @override
@@ -121,24 +134,40 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
   }
   otpVerification()async{
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int userid = prefs.getInt('userid');
-    prefs.setBool("isLogin", true);
-    Map<String, String> params = Map();
-    params['user_id'] = userid.toString();
-    params['otp'] = _otpController.text.toString();
-
-    await _dio.post(VERIFY_OTP,data: params).then((value) {
-      // var varJson = value.data;
-
-      if(value.statusCode == 200)
+    var otpget = _otpController.text.toString();
+    var correctotp = widget.userotp.toString();
+    if(otpget == correctotp)
       {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        int userid = prefs.getInt('userid');
+        prefs.setBool("isLogin", true);
+        Map<String, String> params = Map();
+        params['user_id'] = userid.toString();
+        params['otp'] = _otpController.text.toString();
 
-        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
-        // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+          await _dio.post(VERIFY_OTP,data: params).then((value) {
+            var varJson = value.data;
+print(varJson);
+            if(value.statusCode == 200)
+            {
+              var statusVerify =varJson['status'];
+              if(statusVerify == "no")
+                {
+                  print("if called");
+                  Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+                }else{
+                Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+              }
+              // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+              // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
+            }
+          });
+        }else{
+        setState(() {
+          validOtp = true;
+        });
       }
-    });
+
 
   }
 }

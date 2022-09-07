@@ -184,21 +184,45 @@ class CardProvider extends ChangeNotifier{
     _urlAllList.removeLast();
     resetPosition();
   }
-  getCardImages()async{
-
+  getCardImages([String datewho,int kmnew,int minAge,int maxAge,String nationality,bool isfilter])async{
     SharedPreferences prefs =await SharedPreferences.getInstance();
     var userid = prefs.getInt('userid');
-    await _dio.post(ALL_USER,data: {"userid":userid}).then((value) {
-      var varJson = value.data as List;
-      print("All Length = ${varJson.length}");
-      if(value.statusCode == 200)
-      {
-        _urlAllList =varJson.map((e) =>UserModel.fromJson(e)).toList();
-        notifyListeners();
-      }
+    if(isfilter == true)
+    {
+      print("if called");
+      Map params = Map();
+      params['userid'] =userid;
+      params["lookingfor"] =datewho;
+      params['country'] = '';
+      params['distance'] = '';
+      await _dio.post(ALL_USER,data: jsonEncode(params)).then((value) {
+        var varJson = value.data as List;
+        print("All Length if called = ${varJson.length}");
+        if(value.statusCode == 200)
+        {
+          _urlAllList =varJson.map((e) =>UserModel.fromJson(e)).toList();
+          notifyListeners();
+        }
 
-    });
+      });
+    }else{
+      print("else called");
+
+        await _dio.post(ALL_USER,data: {"userid":userid}).then((value) {
+          var varJson = value.data as List;
+          print("All Length else called= ${varJson.length}");
+          if(value.statusCode == 200)
+          {
+            _urlAllList =varJson.map((e) =>UserModel.fromJson(e)).toList();
+            notifyListeners();
+          }
+
+        });
+    }
+
   }
+  // [String datewho,int kmnew,int minAge,int maxAge,String nationality]
+
   void resetUsers(){
     getCardImages();
     // _urlAllList = [];

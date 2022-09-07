@@ -29,9 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
       print(validateLogin);
       if(validateLogin == false || validateLogin == null)
         {
-          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
         }
       else{
+
         Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
       }
     },

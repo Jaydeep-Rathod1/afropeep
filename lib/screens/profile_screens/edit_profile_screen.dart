@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:afropeep/widgets/custom_textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/user_models/single_user_model.dart';
+import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -34,20 +43,110 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'Both',
   ];
   double km = 10;
+  Dio _dio = Dio();
+  SingleUserModel arrAllUser;
+  BuildContext _mainContex;
+  List<String> listofImages =[];
+  String fullAddress;
+  List<String> listofInterstes ;
+  var photourlmain;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    setState(() {
-      _yourName.text = 'Mark Ruffalo';
-      _mobileNumber.text = '+1 996 745 7890 ';
-      _mailid.text = 'markruffalo@gmail.com';
-      _location.text = "155 Queen St, Ottawa, ON K1P 6L1, Canada";
-      _region.text = "Canada";
-      _profession.text = "Canada";
-      _college.text = "University Of British Columbia";
-      _school.text = "Des Bâtisseurs";
+
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getSingleUserDetails();
+      // genrateListImages();
+      // await getLocation();
+      // await getAge();
+      // await genrateIntersts();
+
     });
+  }
+  getAge()async {
+    var dateCurrent = DateTime.now();
+    var currentYear = dateCurrent.year;
+    print("current year = ${currentYear}");
+    //  var parsedDate = DateTime.parse(arrAllUser.birthDate);
+    //  var formatDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+    // // var bithYear = formatDate;
+    //  print("birthDate = ${formatDate}");
+  }
+  genrateListImages(){
+
+    if(arrAllUser.photoUrl1 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl1);
+    }
+    if(arrAllUser.photoUrl2 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl2);
+    }
+    if(arrAllUser.photoUrl3 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl3);
+    }
+    if(arrAllUser.photoUrl4 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl4);
+    }
+    if(arrAllUser.photoUrl5 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl5);
+    }
+    if(arrAllUser.photoUrl6 != null)
+    {
+      listofImages.add(arrAllUser.photoUrl6);
+    }
+    print(listofImages);
+  }
+  getLocation() async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(double.parse(arrAllUser.lattitude), double.parse(arrAllUser.longitude));
+    print(placemarks);
+    Placemark place = placemarks[0];
+    var Address = '${place.subLocality}, ${place.locality}';
+    setState(() {
+      fullAddress = Address;
+    });
+  }
+  getSingleUserDetails()async{
+    Apploader(_mainContex);
+    Map params = Map();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userid =prefs.getInt('userid');
+    print("userid = ${userid}");
+    params['userid'] = userid;
+    await _dio.post(GET_USER_BY_ID,data: jsonEncode(params)).then((value)async {
+      print("value = ${value}");
+      // final coordinates = new Coordinates(
+      //     myLocation.latitude, myLocation.longitude);
+      // var addresses = await Geocoder.local.findAddressesFromCoordinates(
+      //     coordinates);
+      // var first = addresses.first;
+
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrAllUser =SingleUserModel.fromJson(value.data[0]);
+          photourlmain = arrAllUser.photoUrl1;
+           setUserValues();
+          RemoveAppLoader(_mainContex);
+        });
+
+      }
+    });
+  }
+  setUserValues(){
+    _yourName.text = arrAllUser.firstname +" "+ arrAllUser.lastname;
+    _mobileNumber.text = arrAllUser.mobileNumber;
+    _mailid.text = arrAllUser.emailId != null ?arrAllUser.emailId:"";
+    _about.text = arrAllUser.bio != null ?arrAllUser.bio:"";
+    _height.text = arrAllUser.height != null ? arrAllUser.height :"";
+    _dob.text = arrAllUser.birthDate != null ? arrAllUser.birthDate:"";
+    _region.text = arrAllUser.religion != null ? arrAllUser.religion:"";
+
   }
   @override
   Widget build(BuildContext context) {
