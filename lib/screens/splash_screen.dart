@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:afropeep/models/user_models/modetostart_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/screens/authentication_screens/login_screen.dart';
 import 'package:afropeep/screens/face_rekognition/camera_new_screen.dart';
 import 'package:afropeep/screens/home_screens/home_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/choose_mode_to_start_screen.dart';
 import 'package:afropeep/screens/onboarding_screen/choose_photos_screen.dart';
+import 'package:afropeep/screens/profile_screens/map_screen.dart';
 import 'package:afropeep/screens/survey/questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -24,17 +26,51 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(Duration(seconds: 3), ()async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
+      var iscompletecong = prefs.getBool('isCompleteCongrations');
       var validateLogin = prefs.getBool('loginvalid');
       print(validateLogin);
+      print(iscompletecong);
+      // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: MapScreen()));
+      // <meta-data android:name="com.google.android.maps.v2.API_KEY"
+      // android:value="AIzaSyBm9_pwQiu_-Ayif0qghzzokFO2IwsL_TE"/>
       if(validateLogin == false || validateLogin == null)
         {
+          print("main if");
           Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
         }
       else{
-
-        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+        print("main else");
+          if(iscompletecong == false || iscompletecong == null)
+            {
+              print("if");
+              Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+            }
+          else{
+            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+            print("else");
+          }
       }
+      /*
+      if(validateLogin == false || validateLogin == null)
+        {
+          print("called when login if");
+          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
+        }
+      else{
+        print("called when login else");
+        if(iscompletecong == false || iscompletecong == null)
+          {
+            print("validatecomplete if");
+            Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+          }
+        else{
+          print(iscompletecong);
+          print("validatecomplete else");
+          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: ChooseModeToStart()));
+          // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: HomeScreen()));
+        }
+*/
+      // }
     },
     );
   }

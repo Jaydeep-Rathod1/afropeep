@@ -79,9 +79,14 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
         ),
         actions: [
-          Padding(
-            padding:EdgeInsets.only(top:20,right: 20),
-            child: Text('Reset',style: TextStyle(fontSize: 14, decoration: TextDecoration.underline,),),
+          GestureDetector(
+            onTap: (){
+              getFilteredUser();
+            },
+            child: Padding(
+              padding:EdgeInsets.only(top:20,right: 20),
+              child: Text('Reset',style: TextStyle(fontSize: 14, decoration: TextDecoration.underline,),),
+            ),
           )
         ],
       ),

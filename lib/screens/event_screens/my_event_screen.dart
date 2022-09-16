@@ -7,6 +7,7 @@ import 'package:afropeep/widgets/custom_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyEventScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class MyEventScreen extends StatefulWidget {
 class _MyEventScreenState extends State<MyEventScreen> {
   List<EventModel> arrAllMyEventList = [];
   List<EventModel> arrMyEventList = [];
+  List<EventModel> arrRevMyEventList = [];
   Dio _dio = Dio();
   BuildContext _mainContex;
   @override
@@ -43,7 +45,8 @@ class _MyEventScreenState extends State<MyEventScreen> {
        if(varJson.isNotEmpty)
          {
            setState(() {
-             arrAllMyEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+             arrRevMyEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+             arrAllMyEventList= arrRevMyEventList.reversed.toList();
              RemoveAppLoader(context);
            });
          }
@@ -70,7 +73,8 @@ class _MyEventScreenState extends State<MyEventScreen> {
                     children: [
                       GestureDetector(
                         onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen()));
+                          // print(arrAllMyEventList[index].eventId);
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen(eventid: arrAllMyEventList[index].eventId.toString(),eventType:"myEvent")));
                         },
                         child: Stack(
                           children: [
@@ -131,7 +135,8 @@ class _MyEventScreenState extends State<MyEventScreen> {
                                         SizedBox(width: 22.0,),
                                         Icon(Icons.location_on_outlined,color: ColorResources.whiteColor,size: 11,),
                                         SizedBox(width: 4.0,),
-                                        CustomText(text:arrAllMyEventList[index].longitude,fontSize: 10,color: ColorResources.whiteColor,),
+                                        CustomText(text:arrAllMyEventList[index].event_address != null?arrAllMyEventList[index].event_address:"",fontSize: 10,color: ColorResources.whiteColor,)
+                                        // getAddressFromLatLng(arrAllMyEventList[index].latitude,arrAllMyEventList[index].longitude),
                                       ],
                                     ),
                                     SizedBox(height: 13.0,)
@@ -152,4 +157,5 @@ class _MyEventScreenState extends State<MyEventScreen> {
       ),
     );
   }
+
 }

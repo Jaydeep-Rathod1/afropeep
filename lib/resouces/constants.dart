@@ -9,6 +9,7 @@ const UPDATE_USER1 = BASE_URL+"updateuser1";
 const ALL_USER = BASE_URL+"filteruser";
 const FILTER_USER = BASE_URL+"alluser";
 const GET_USER_BY_ID = BASE_URL +"usedetails";
+const EDIT_USER_BY_ID = BASE_URL +"edituser";
 
 const SEND_OTP_REQUEST = BASE_URL +"addotp";
 const VERIFY_OTP = BASE_URL +"verifyotp";
@@ -21,7 +22,11 @@ const SUBSCRITION_URL =BASE_URL +"allsubscription";
 const ADD_EVENT = BASE_URL+"addevent";
 const ALL_EVENT = BASE_URL+"allevent";
 const MY_EVENT = BASE_URL+"myevent";
-
+const MY_EVENT_BY_ID = BASE_URL+"myeventdetails";
+const DELETE_EVENT = BASE_URL+"deleteevent";
+const EDIT_EVENT = BASE_URL + "editevent";
+const JOIN_EVENT = BASE_URL+"joinevent";
+const JOIN_EVENT_DETAILS = BASE_URL+"joineventdetails";
 
 const CHANGE_PASSWORD = BASE_URL + "changepass";
 

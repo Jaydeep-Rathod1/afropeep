@@ -130,7 +130,7 @@ class _ChooseModeToStartState extends State<ChooseModeToStart> {
                               ),
                               child: ListTile(
                                 title: Text(arrAllModeToStartList[index].modeName),
-                                trailing: value == arrAllModeToStartList[index] ? Icon(Icons.check_circle ,color: Colors.black,):Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                                trailing: value == arrAllModeToStartList[index] ? Icon(Icons.check_circle ,color: Colors.black,):Icon(Icons.circle_outlined ,color: Colors.black,),
                               )
                           ),
                         ),

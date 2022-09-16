@@ -30,14 +30,14 @@ class _MatchScreenState extends State<MatchScreen> {
     _mainContex = this.context;
 // print(GetAddressFromLatLong(21.211739698046472, 72.78160081534332).runtimeType);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      setState(() {
+
         getMatchList();
-      });
+
     });
   }
   getMatchList()async{
     // Apploader(context);
-    Apploader(_mainContex);
+    // Apploader(_mainContex);
     Map params = Map();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userid =prefs.getInt('userid');
@@ -48,10 +48,13 @@ class _MatchScreenState extends State<MatchScreen> {
       print(varJson);
       if(value.statusCode == 200)
       {
-        setState(() {
-          arrAllMatchRequest =varJson.map((e) =>GetMatchRequestModel.fromJson(e)).toList();
-          RemoveAppLoader(_mainContex);
-        });
+        // RemoveAppLoader(_mainContex);
+       if(mounted){
+         print("called if");
+         setState(() {
+           arrAllMatchRequest =varJson.map((e) =>GetMatchRequestModel.fromJson(e)).toList();
+         });
+       }
 
       }
     });

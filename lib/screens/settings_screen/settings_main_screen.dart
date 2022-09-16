@@ -31,28 +31,12 @@ class _SettingsMainScreenState extends State<SettingsMainScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {});
     });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        /*appBar: AppBar(
-          title: Row(
-            children: [
-
-              CustomText(
-                text: 'Settings',
-                fontSize: 18,
-              )
-            ],
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(16),
-            ),
-          ),
-
-        ),*/
        body:SingleChildScrollView(
          child:  Padding(
            padding:EdgeInsets.all(20),
@@ -235,9 +219,7 @@ class _SettingsMainScreenState extends State<SettingsMainScreen> {
                    OutlinedButton(
                      onPressed: ()async{
                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                       prefs.remove("userid");
-                       prefs.remove("isLogin");
-                       prefs.remove("isCompleteAllData");
+                       await prefs.clear();
                        Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
                      },
                      style: OutlinedButton.styleFrom(
@@ -256,16 +238,17 @@ class _SettingsMainScreenState extends State<SettingsMainScreen> {
                      onPressed: ()async{
                        SharedPreferences prefs = await SharedPreferences.getInstance();
                        int userid = prefs.getInt('userid');
-                       prefs.setBool("isLogin", true);
+
                        Map<String, String> params = Map();
                        params['user_id'] = userid.toString();
 
                        print(params);
-                       await _dio.post(DELETE_ACCOUNT,data: {"userid":userid}).then((value) {
+                       await _dio.post(DELETE_ACCOUNT,data: {"userid":userid}).then((value)async {
                          // var varJson = value.data;
                          print("value = ${value.data["message"]}");
                          if(value.statusCode == 200)
                          {
+                           await prefs.clear();
                            Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: LoginScreen()));
                            // Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: const OtpVerificationScreen()));
                          }

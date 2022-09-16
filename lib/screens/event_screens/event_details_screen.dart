@@ -1,112 +1,109 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:afropeep/models/event_models/event_details_byid.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/widgets/custom_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
+import 'details_event_screen.dart';
+import 'edit_event_screen.dart';
+import 'event_screen.dart';
+import 'joined_event_screen.dart';
 
 class EventDetailsScreen extends StatefulWidget {
+  String eventid;
+  String eventType;
+  EventDetailsScreen({this.eventid,this.eventType});
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  Dio _dio = Dio();
+  BuildContext _mainContex;
+  EventDetailsById arrEventDetailsByid =  new EventDetailsById();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _mainContex = this.context;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await getEventDetailsById();
+    });
+  }
+  var eventimg ;
+  getEventDetailsById()async{
+    Apploader(_mainContex);
+    Map params = Map();
+    params['eventid'] = widget.eventid.toString();
+    await _dio.post(MY_EVENT_BY_ID,data: jsonEncode(params)).then((value) {
+      print(value.data);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+
+          arrEventDetailsByid = EventDetailsById.fromJson(value.data);
+          eventimg = arrEventDetailsByid.eventImg.toString();
+          RemoveAppLoader(_mainContex);
+        });
+
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     /* body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    child: Image.asset(
-                      'assets/images/event_4.png',
-                      height: MediaQuery.of(context).size.height/3,
-                      width: MediaQuery.of(context).size.width,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    top: 50.0,
-                    child:Padding(
-                      padding: EdgeInsets.only(left: 20,right: 20),
-                      child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                          },
-                          icon: Icon(Icons.arrow_back,color: ColorResources.whiteColor,)
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      top: 50.0,
-                      right: 0.0,
-                      child:Row(
-                        children: [
-                          Container(
-                            height: 30,
-                            width: 30,
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle
-                            ),
-                            child: Icon(Icons.edit,size: 20,),
-                          ),
-                          SizedBox(width: 10,),
-                          Container(
-                            height: 30,
-                            width: 30,
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle
-                            ),
-                            child: Icon(Icons.delete,size: 20,color: Color(0xffF92626),),
-                          ),
-                          SizedBox(width: 20,)
-                        ],
-                      )
-                  ),
-
-
-                ],
-              ),
-
-            ],
-          )
-          
-
-        ],
-      )*/
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              /*decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/event_4.png'),
-                  fit: BoxFit.fitHeight,
-                ),
-              ),*/
             ),
             Positioned(
                 top: 0.0,
                 child:Stack(
                   children: [
-                    Container(
-                      child: Image.asset(
-                        'assets/images/event_4.png',
+                   /* Container(
+                      child: Image.network(
+                        GET_EVENT_IMAGES_LINK+eventimg,
                         height: MediaQuery.of(context).size.height/3,
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    ),*/
+                    arrEventDetailsByid.eventImg!=null? Container(
+                      child: CachedNetworkImage(
+                        imageUrl: GET_EVENT_IMAGES_LINK+arrEventDetailsByid.eventImg,
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: MediaQuery.of(context).size.height/3,
+                          width: MediaQuery.of(context).size.width,
+
+                          decoration: BoxDecoration(
+                            image: DecorationImage( //image size fill
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) => Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator(
+                            color: ColorResources.primaryColor,
+                          ), // you can add pre loader iamge as well to show loading.
+                        ), //show progress  while loading image
+                        errorWidget: (context, url, error) => Image.asset("assets/images/noimage.png"),
+                        //show no iamge availalbe image on error laoding
+                      ),
+                    ):Container(),
                     Positioned(
                       top: 50.0,
                       child:Padding(
@@ -126,27 +123,39 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         right: 0.0,
                         child:Row(
                           children: [
-                            Container(
-                              height: 30,
-                              width: 30,
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle
+                            widget.eventType == "myEvent"?GestureDetector(
+                              onTap: (){
+                                print(widget.eventid);
+                                Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EditEventScreen(eventid:widget.eventid)));
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.edit,size: 20,),
                               ),
-                              child: Icon(Icons.edit,size: 20,),
-                            ),
+                            ):Container(),
                             SizedBox(width: 10,),
-                            Container(
-                              height: 30,
-                              width: 30,
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle
+                            widget.eventType == "myEvent"?GestureDetector(
+                              onTap: (){
+                                print(widget.eventid);
+                                deleteEvent(widget.eventid);
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.delete,size: 20,color: Color(0xffF92626),),
                               ),
-                              child: Icon(Icons.delete,size: 20,color: Color(0xffF92626),),
-                            ),
+                            ):Container(),
                             SizedBox(width: 20,)
                           ],
                         )
@@ -193,18 +202,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    SingleChildScrollView(
-                                      child: Container(
+                                    Container(
                                         height: MediaQuery.of(context).size.height*1.3,
+
                                         child: TabBarView(children: <Widget>[
                                           //all event tab
-                                          DetailsScreen(),
+                                          DetailsScreen(arrEventDetailsByid:arrEventDetailsByid,eventType:widget.eventType),
                                           // my events tab
-                                          JoinedScreen(),
+                                          JoinedScreen(eventid:arrEventDetailsByid.eventId.toString()),
 
                                         ]),
                                       ),
-                                    )
+
 
 
 
@@ -226,417 +235,42 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       )
     );
   }
-}
+  deleteEvent(String eventid)async{
+    Apploader(context);
+    var event_id= int.parse(eventid);
+    var event_imgage = arrEventDetailsByid.eventImg.toString();
+   /* FormData newdata = FormData.fromMap({
+      'eventid':event_id,
+      'event_img': event_imgage.toString(),
+    });*/
+    Map params = Map();
+    params['eventid'] = event_id;
+    params['event_img'] = event_imgage.toString();
 
-class DetailsScreen extends StatefulWidget {
+    print(params);
 
-  @override
-  State<DetailsScreen> createState() => _DetailsScreenState();
-}
-
-class _DetailsScreenState extends State<DetailsScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CustomText(text: 'Razzle Dazzle',fontSize: 20,fontWeight: FontWeight.w700,color: ColorResources.blackColor,letterSpacing: true,),
-          SizedBox(height: 10,),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ColorResources.primaryColor)
-            ),
-            padding: EdgeInsets.all(10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-
-                Container(
-                  padding:EdgeInsets.only(left:10,right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset('assets/icons/calender_icon.png',color: ColorResources.primaryColor,width: 12,height: 12,),
-                          SizedBox(width: 10,),
-                          CustomText(text: 'Event Date',color: ColorResources.primaryColor,fontSize: 12,)
-                        ],
-                      ),
-                      CustomText(text: '06-23-2022',fontSize: 14,)
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 90,
-                  padding: const EdgeInsets.all(10),
-                  child: VerticalDivider(
-                    color: ColorResources.blackColor,
-                    thickness: 1,
-                    indent: 0,
-                    endIndent: 0,
-                    width: 10,
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.location_on_outlined,color: ColorResources.primaryColor,size: 15),
-                          SizedBox(width: 8,),
-                          CustomText(text: 'Event Date',color: ColorResources.primaryColor,fontSize: 12,)
-                        ],
-                      ),
-
-                      Text(
-                        '155 Queen St, Ottawa,\n ON K1P 6L1, Canada',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 10,),
-          Divider(),
-          SizedBox(height: 10,),
-          CustomText(text: 'About Event',fontSize: 16,fontWeight: FontWeight.w700,color: ColorResources.blackColor,letterSpacing: true,),
-          SizedBox(height: 10,),
-          Container(
-            child: CustomText(text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed  diam nonumy eirmod tempor invidunt ut labore et dolore  magna aliquyam erat.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed  diam nonumy eirmod tempor invidunt ut labore et dolore  magna aliquyam erat.',),
-          ),
-          SizedBox(height: 10,),
-          Divider(),
-          SizedBox(height: 10,),
-          CustomText(text: 'Host By',fontSize: 16,fontWeight: FontWeight.w700,color: ColorResources.blackColor,letterSpacing: true,),
-          SizedBox(height: 14,),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Color(0xffF3F3F3))
-            ),
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Image.asset('assets/images/myuser.png',height: 40,),
-                SizedBox(width: 10,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CustomText(text: 'You',fontSize: 14,),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on_outlined,size: 10,),
-                        CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 10,),
-          Divider(),
-          SizedBox(height: 10,),
-          Image.asset('assets/images/map_2.png',width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height/3.5,fit: BoxFit.cover,)
-        ],
-      ),
-    );
+    await _dio.post(DELETE_EVENT,data:jsonEncode(params),).then((value)async {
+      print("value= ${value}");
+      if(value.statusCode == 200)
+      {
+        print(value);
+        print("called");
+        // Navigator.of(context).pop();
+        RemoveAppLoader(context);
+        Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
+      }
+    });
+   /* await _dio.post(DELETE_EVENT,data:data,options: Options(contentType: 'multipart/form-data')).then((value)async {
+      print(value.data);
+      if(value.statusCode == 200)
+      {
+        RemoveAppLoader(context);
+        Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child:  EventScreen()));
+      }
+    });*/
   }
 }
 
 
-class JoinedScreen extends StatefulWidget {
-  @override
-  State<JoinedScreen> createState() => _JoinedScreenState();
-}
-
-class _JoinedScreenState extends State<JoinedScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CustomText(text: 'Joined : 26 ',),
-          Divider(),
-          Row(
-              children: [
-                Image.asset('assets/images/circle_1.png',height: 40,),
-                SizedBox(width: 10,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on_outlined,size: 10,),
-                        CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider(),
-          Row(
-            children: [
-              Image.asset('assets/images/circle_1.png',height: 40,),
-              SizedBox(width: 10,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(text: 'Scarlett Johansson',fontSize: 14,),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on_outlined,size: 10,),
-                      CustomText(text: 'Ottawa, Canada',fontSize: 8,)
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-          Divider()
 
 
-        ],
-      ),
-    );
-  }
-}

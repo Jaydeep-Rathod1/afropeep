@@ -184,7 +184,8 @@ class CardProvider extends ChangeNotifier{
     _urlAllList.removeLast();
     resetPosition();
   }
-  getCardImages([String datewho,int kmnew,int minAge,int maxAge,String nationality,bool isfilter])async{
+  getCardImages([String datewho,int kmnew = 0,int minAge = 0,int maxAge=0,String nationality="",bool isfilter])async{
+    print("date who in filter = ${datewho}");
     SharedPreferences prefs =await SharedPreferences.getInstance();
     var userid = prefs.getInt('userid');
     if(isfilter == true)
@@ -193,8 +194,9 @@ class CardProvider extends ChangeNotifier{
       Map params = Map();
       params['userid'] =userid;
       params["lookingfor"] =datewho;
-      params['country'] = '';
+      params['country'] = nationality;
       params['distance'] = '';
+      print("parameter = ${params}");
       await _dio.post(ALL_USER,data: jsonEncode(params)).then((value) {
         var varJson = value.data as List;
         print("All Length if called = ${varJson.length}");

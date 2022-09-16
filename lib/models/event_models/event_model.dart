@@ -5,6 +5,7 @@ class EventModel {
   String eventDate;
   String latitude;
   String longitude;
+  String event_address;
   String aboutEvent;
   String eventImg;
   String createdAt;
@@ -17,6 +18,7 @@ class EventModel {
         this.eventDate,
         this.latitude,
         this.longitude,
+        this.event_address,
         this.aboutEvent,
         this.eventImg,
         this.createdAt,
@@ -29,6 +31,7 @@ class EventModel {
     eventDate = json['event_Date'];
     latitude = json['latitude'];
     longitude = json['longitude'];
+    event_address = json['event_address'];
     aboutEvent = json['about_event'];
     eventImg = json['event_img'];
     createdAt = json['created_at'];
@@ -43,6 +46,7 @@ class EventModel {
     data['event_Date'] = this.eventDate;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
+    data['event_address'] = this.event_address;
     data['about_event'] = this.aboutEvent;
     data['event_img'] = this.eventImg;
     data['created_at'] = this.createdAt;

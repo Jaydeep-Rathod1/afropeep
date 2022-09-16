@@ -36,7 +36,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         timeInSecForIosWeb: 1,
         backgroundColor: ColorResources.whiteColor,
         textColor: ColorResources.primaryColor,
-        fontSize: 16.0
+        fontSize: 16.0,
     );
   }
 
@@ -150,6 +150,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 print(varJson);
             if(value.statusCode == 200)
             {
+              prefs.setBool("loginvalid", true);
               var statusVerify =varJson['status'];
               if(statusVerify == "no")
                 {

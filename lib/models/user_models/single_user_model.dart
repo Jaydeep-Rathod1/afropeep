@@ -13,12 +13,14 @@ class SingleUserModel {
   String intrest;
   String lookingFor;
   String address;
-  Null lattitude;
-  Null longitude;
+  String lattitude;
+  String longitude;
   String status;
   String regiDatetime;
-  Null emailId;
-  Null distance;
+  String emailId;
+  String distance;
+  String college;
+  String school;
   String createdAt;
   String updatedAt;
   String countryName;
@@ -30,8 +32,8 @@ class SingleUserModel {
   String photoUrl2;
   String photoUrl3;
   String photoUrl4;
-  Null photoUrl5;
-  Null photoUrl6;
+  String photoUrl5;
+  String photoUrl6;
   String adddatetime;
   int userId;
   String bio;
@@ -60,6 +62,8 @@ class SingleUserModel {
         this.regiDatetime,
         this.emailId,
         this.distance,
+        this.college,
+        this.school,
         this.createdAt,
         this.updatedAt,
         this.countryName,
@@ -101,6 +105,8 @@ class SingleUserModel {
     regiDatetime = json['regi_datetime'];
     emailId = json['email_id'];
     distance = json['distance'];
+    college = json['college'];
+    school = json['school'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     countryName = json['country_name'];
@@ -144,6 +150,8 @@ class SingleUserModel {
     data['regi_datetime'] = this.regiDatetime;
     data['email_id'] = this.emailId;
     data['distance'] = this.distance;
+    data['college'] = this.college;
+    data['school'] = this.school;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['country_name'] = this.countryName;

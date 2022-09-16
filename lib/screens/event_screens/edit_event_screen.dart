@@ -1,13 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:afropeep/resouces/color_resources.dart';
-import 'package:afropeep/resouces/constants.dart';
-import 'package:afropeep/resouces/functions.dart';
-import 'package:afropeep/screens/event_screens/event_screen.dart';
-import 'package:afropeep/widgets/custom_button.dart';
-import 'package:afropeep/widgets/custom_text.dart';
-import 'package:afropeep/widgets/custom_textfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,26 +11,40 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
-class AddEventScreen extends StatefulWidget {
+import '../../models/event_models/event_details_byid.dart';
+import '../../resouces/color_resources.dart';
+import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text.dart';
+import '../../widgets/custom_textfield.dart';
+import 'event_screen.dart';
+
+class EditEventScreen extends StatefulWidget {
+  String eventid;
+  EditEventScreen({this.eventid});
   @override
-  State<AddEventScreen> createState() => _AddEventScreenState();
+  State<EditEventScreen> createState() => _EditEventScreenState();
 }
 
-
-class _AddEventScreenState extends State<AddEventScreen> {
+class _EditEventScreenState extends State<EditEventScreen> {
   TextEditingController _eventDate = TextEditingController();
   TextEditingController _eventLocation = TextEditingController();
   TextEditingController _eventabout = TextEditingController();
   TextEditingController _eventName = TextEditingController();
-  var uuid = Uuid();
-  String _sessionToken = "122344";
   Dio _dio = Dio();
   File imageFile;
-  List<File> imageList = [];
+  var imageList = [];
+  var oldImage ;
+  BuildContext _mainContex;
+  EventDetailsById arrEventDetailsByid =  new EventDetailsById();
+  var eventimg ;
   bool visibleEventLocation = false;
+  List<Location> locations;
+  var uuid = Uuid();
+  String _sessionToken = "122344";
   var newlatitude;
   var newlongitude;
-  List<Location> locations;
   void onChange(){
     if(_sessionToken == null)
     {
@@ -75,13 +82,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
     if (pickedFile != null) {
       setState(() {
         imageFile = pickedFile;
+        imageList = [];
       });
+
       imageList.add(imageFile);
     }
     Navigator.pop(context);
     // params['ptaskattachment'] = await MultipartFile.fromFile(arrImageList[0].path, filename:
   }
-
   _getFromCamera() async {
     pickedFile = await ImagePicker.pickImage(
       source: ImageSource.camera,
@@ -91,8 +99,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
     );
     if (pickedFile != null) {
       setState(() {
-
         imageFile = pickedFile;
+        imageList = [];
       });
       imageList.add(imageFile);
 
@@ -100,27 +108,93 @@ class _AddEventScreenState extends State<AddEventScreen> {
     Navigator.pop(context);
     // params['ptaskattachment'] = await MultipartFile.fromFile(arrImageList[0].path, filename:
   }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _mainContex = this.context;
     visibleEventLocation = false;
     _eventLocation.addListener(() {
       onChange();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
+      print("called");
+      setState(() {
+        visibleEventLocation = false;
+        getEventDetailsById();
+      });
     });
   }
+  getEventDetailsById()async{
+    Apploader(_mainContex);
+    Map params = Map();
+    params['eventid'] = widget.eventid.toString();
+    await _dio.post(MY_EVENT_BY_ID,data: jsonEncode(params)).then((value)async {
+      print(value.data);
+      if(value.statusCode == 200)
+      {
+        setState(() {
+          arrEventDetailsByid = EventDetailsById.fromJson(value.data);
+          eventimg = arrEventDetailsByid.eventImg.toString();
+          imageList.add(eventimg);
+           setEventDetails();
+          setEventDate();
 
+          RemoveAppLoader(_mainContex);
+        });
+        print("all arr event = ${arrEventDetailsByid}");
+      }
+    });
+  }
+  var  currentAddress = '';
+  setAddress(String latitude,String longitude)async{
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          double.parse(latitude),
+          double.parse(longitude)
+      );
+
+      Placemark place = placemarks[0];
+
+      setState(() {
+          currentAddress = "${place.locality}, ${place.subLocality}";
+      });
+
+
+      print("current Address = ${currentAddress}");
+      // return CustomText(text:currentAddress,fontSize: 10,color: ColorResources.whiteColor,);
+
+    } catch (e) {
+      print(e);
+    }
+  }
+  var photourl1= "";
+  setEventDetails()async{
+    setState(() {
+      photourl1 = arrEventDetailsByid.eventImg;
+      _eventName.text = arrEventDetailsByid.eventName;
+      _eventabout.text = arrEventDetailsByid.aboutEvent;
+      _eventDate.text = arrEventDetailsByid.eventDate;
+      _eventLocation.text = arrEventDetailsByid.address != null? arrEventDetailsByid.address:"";
+    });
+  }
+  var getEventDate;
+  setEventDate(){
+    var date = arrEventDetailsByid.eventDate;
+    String out = date.replaceAll("/","-");
+    // DateTime newDate = DateFormat('dd-MM-yyyy - HH:mm').parse(dt);
+     var format = DateFormat("dd-MM-yyyy").parse(out);
+    setState(() {
+      getEventDate = format;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
         title:CustomText(
-          text: 'Add Event',
+          text: 'Edit Event',
           fontSize: 18,
         ),
         shape: const RoundedRectangleBorder(
@@ -131,7 +205,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-            padding:EdgeInsets.only(left: 20,right: 20),
+          padding:EdgeInsets.only(left: 20,right: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,8 +228,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   iconName: CupertinoIcons.calendar,
                   iconColor: ColorResources.blackColor,
                   onPressed:(){
-                    FocusScope.of(context).requestFocus(new FocusNode());
+
                     CustomDateTimePicker();
+                    FocusScope.of(context).requestFocus(new FocusNode());
                   }),
               SizedBox(height: 24,),
               CustomText(text: 'Event Location',),
@@ -171,49 +246,46 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     height: 150,
                     width: 300,
                     child: Card(
-                      child: ListView.builder(
-                              itemCount: _placesList.length,
-                              padding: EdgeInsets.all(10),
-                              itemBuilder: (context,index){
-                                return GestureDetector(
-                                  onTap: ()async{
-                                    // List<Location> locations = await
-                                     locations = await locationFromAddress(_placesList[index]['description']);
-                                    print(locations.last.longitude);
-                                    print(locations.last.latitude);
-                                    print(locations.toString());
-                                    setState(() {
-                                      _eventLocation.text = _placesList[index]['description'].toString();
-                                      visibleEventLocation = false;
-                                      newlongitude = locations.last.longitude;
-                                      newlatitude = locations.last.latitude;
-                                    });
-                                   /* List<Placemark> placemarks = await placemarkFromCoordinates(
+                        child: ListView.builder(
+                            itemCount: _placesList.length,
+                            padding: EdgeInsets.all(10),
+                            itemBuilder: (context,index){
+                              return GestureDetector(
+                                onTap: ()async{
+                                  // List<Location> locations = await
+                                  locations = await locationFromAddress(_placesList[index]['description']);
+                                  print(locations.toString());
+                                  setState(() {
+                                    _eventLocation.text = _placesList[index]['description'].toString();
+                                    visibleEventLocation = false;
+                                    newlongitude= locations.last.longitude;
+                                    newlatitude =locations.last.latitude;
+                                  });
+                                  /* List<Placemark> placemarks = await placemarkFromCoordinates(
                                         locations.last.longitude,
                                         locations.last.latitude
                                     ).then((value) {
 
                                     });*/
-                                    // Placemark place = placemarks[0];
+                                  // Placemark place = placemarks[0];
 
 
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(_placesList[index]['description']),
-                                      ),
-                                      Divider(),
-                                    ],
-                                  ),
-                                );
-                              })
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: Text(_placesList[index]['description']),
+                                    ),
+                                    Divider(),
+                                  ],
+                                ),
+                              );
+                            })
 
                     ),
                   )),
-
               SizedBox(height: 24,),
               CustomText(text: 'About Event',),
               SizedBox(height: 15,),
@@ -225,7 +297,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                 children: [
                   GestureDetector(
                     onTap: (){
-                      FocusManager.instance.primaryFocus?.unfocus();
                       _pickedImage();
                     },
                     child:  Container(
@@ -254,13 +325,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         height: 138,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color:ColorResources.whiteColor,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: ColorResources.blackColor)
+                            color:ColorResources.whiteColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: ColorResources.blackColor)
                         ),
                         child:  ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                          child: imageList.asMap().containsKey(0) ? Image.file(imageList[0],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
+                          child: imageList.asMap().containsKey(0) ?imageList[0].runtimeType.toString() == "String"? Image.network(GET_EVENT_IMAGES_LINK+imageList[0],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Image.file(imageList[0],fit: BoxFit.cover,height: 138,width: MediaQuery.of(context).size.width/3.2,):Icon(Icons.add,size:30),
                         ),
                       ),
                       Positioned(
@@ -269,7 +340,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                           child: InkWell(
                             onTap: (){
                               // print(imageList.removeAt(index));
-                              FocusManager.instance.primaryFocus?.unfocus();
                               imageList.removeAt(0);
                               setState((){});
                             },
@@ -288,19 +358,19 @@ class _AddEventScreenState extends State<AddEventScreen> {
               ),
               SizedBox(height: 24,),
               Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: CustomButton(
-                      height: 45,
-                      backgroundColor: ColorResources.blackColor,
-                      onPressed: ()async{
-                       addEvent();
-                      },
-                      buttonText: 'Post',
-                      fontSize: 16.0,
-                      textColor: ColorResources.whiteColor,
-                      width:MediaQuery.of(context).size.width,
-                    )
-                ),
+                  alignment: FractionalOffset.bottomCenter,
+                  child: CustomButton(
+                    height: 45,
+                    backgroundColor: ColorResources.blackColor,
+                    onPressed: ()async{
+                      addEvent();
+                    },
+                    buttonText: 'Post',
+                    fontSize: 16.0,
+                    textColor: ColorResources.whiteColor,
+                    width:MediaQuery.of(context).size.width,
+                  )
+              ),
               SizedBox(height: 20,),
             ],
           ),
@@ -344,18 +414,20 @@ class _AddEventScreenState extends State<AddEventScreen> {
     ).then((ImageSource source) async {
     });
   }
+  DateTime newpickedDate;
   CustomDateTimePicker()async{
-    // initialDate: DateTime.now().subtract(Duration(days: 1)),
-    // firstDate: DateTime(1950),
-    // //DateTime.now() - not to allow to choose before today.
-    // lastDate: DateTime.now().subtract(Duration(days: 1)));
+
     DateTime pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate:newpickedDate!= null?newpickedDate:  getEventDate,
+
         firstDate: DateTime.now(),
         //DateTime.now() - not to allow to choose before today.
         lastDate: DateTime(2100));
     if (pickedDate != null) {
+      setState(() {
+        newpickedDate = pickedDate;
+      });
       String date =
       DateFormat('dd').format(pickedDate);
       String month =
@@ -369,41 +441,43 @@ class _AddEventScreenState extends State<AddEventScreen> {
       });
     } else {}
   }
-  var  currentAddress;
   addEvent()async{
-    FocusManager.instance.primaryFocus?.unfocus();
     print("we are here");
     Apploader(context);
     await getAddressFromLatLng();
-
     var name = _eventName.text.toString();
     var eventDate = _eventDate.text.toString();
-    var eventLatitude= newlatitude;
-    var eventLongitude = newlongitude;
-    var address = currentAddress.toString();
+    var eventLatitude= newlatitude != null? newlatitude:arrEventDetailsByid.latitude;
+    var eventLongitude = newlongitude != null? newlongitude:arrEventDetailsByid.longitude;
     var eventabout = _eventabout.text.toString();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userid = prefs.getInt('userid');
-
+    var newaddress = currentAddress.isEmpty ?arrEventDetailsByid.event_address:currentAddress.toString();
+    print(newaddress);
+    print(arrEventDetailsByid.eventImg);
 
     FormData data = FormData.fromMap({
-      "user_id":userid,
+      "eventid":widget.eventid,
+      // "user_id":userid,
       "event_name" :name,
       "event_Date" :eventDate,
       "latitude": eventLatitude,
-      "longitude": eventLongitude,
-      "address":address,
+      "longitude":eventLongitude,
+      "address":newaddress,
       "about_event":eventabout,
-      "event_img": await MultipartFile.fromFile(
-        imageList[0].path,
-        filename: imageList[0].path.split('/').last,
-      ),
+      "oldevent_img": arrEventDetailsByid.eventImg,
+      if(imageList[0].runtimeType.toString() == "_File")
+        "event_img": await MultipartFile.fromFile(
+          imageList[0].path,
+          filename: imageList[0].path.split('/').last,
+        ),
     });
+
     print(data.fields);
     // var respone =await _dio.post(ADD_EVENT,data:data).catchError((e) => print(e.response.toString()));
 
-    // print(data.files);
-    await _dio.post(ADD_EVENT,data:data).then((value) {
+    print(data.files);
+    await _dio.post(EDIT_EVENT,data:data).then((value) {
       print("value= ${value}");
       if(value.statusCode == 200)
       {
@@ -417,16 +491,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
   }
 
   getAddressFromLatLng() async {
-      if(newlatitude != null && newlongitude != null)
-      {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-            newlatitude,
-            newlongitude
-        );
-        Placemark place = placemarks[0];
-        setState(() {
-          currentAddress = "${place.locality}, ${place.subLocality}";
-        });
-      }
+    if(newlatitude != null && newlongitude != null)
+    {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          newlatitude,
+          newlongitude
+      );
+      Placemark place = placemarks[0];
+      setState(() {
+        currentAddress = "${place.locality}, ${place.subLocality}";
+      });
+    }
   }
 }

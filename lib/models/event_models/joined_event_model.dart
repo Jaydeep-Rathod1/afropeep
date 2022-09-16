@@ -1,4 +1,6 @@
-class UserModel {
+import 'dart:ffi';
+
+class JoinedEventDetailsModel {
   int uerId;
   int countryId;
   String mobileNumber;
@@ -32,16 +34,8 @@ class UserModel {
   String photoUrl6;
   String adddatetime;
   int userId;
-  String countryName;
-  int countryCode;
-  String countryShortname;
-  String modeName;
-  String bio;
-  String religion;
-  String occupation;
-  String height;
 
-  UserModel(
+  JoinedEventDetailsModel(
       {this.uerId,
         this.countryId,
         this.mobileNumber,
@@ -74,17 +68,9 @@ class UserModel {
         this.photoUrl5,
         this.photoUrl6,
         this.adddatetime,
-        this.userId,
-        this.countryName,
-        this.countryCode,
-        this.countryShortname,
-        this.modeName,
-        this.bio,
-        this.religion,
-        this.occupation,
-        this.height});
+        this.userId});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  JoinedEventDetailsModel.fromJson(Map<String, dynamic> json) {
     uerId = json['uer_id'];
     countryId = json['country_id'];
     mobileNumber = json['mobile_number'];
@@ -118,14 +104,6 @@ class UserModel {
     photoUrl6 = json['photo_url6'];
     adddatetime = json['adddatetime'];
     userId = json['user_id'];
-    countryName = json['country_name'];
-    countryCode = json['country_code'];
-    countryShortname = json['country_shortname'];
-    modeName = json['mode_name'];
-    bio = json['bio'];
-    religion = json['religion'];
-    occupation = json['Occupation'];
-    height = json['height'];
   }
 
   Map<String, dynamic> toJson() {
@@ -163,14 +141,6 @@ class UserModel {
     data['photo_url6'] = this.photoUrl6;
     data['adddatetime'] = this.adddatetime;
     data['user_id'] = this.userId;
-    data['country_name'] = this.countryName;
-    data['country_code'] = this.countryCode;
-    data['country_shortname'] = this.countryShortname;
-    data['mode_name'] = this.modeName;
-    data['bio'] = this.bio;
-    data['religion'] = this.religion;
-    data['Occupation'] = this.occupation;
-    data['height'] = this.height;
     return data;
   }
 }

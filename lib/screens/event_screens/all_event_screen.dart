@@ -1,3 +1,5 @@
+
+
 import 'package:afropeep/models/event_models/event_model.dart';
 import 'package:afropeep/resouces/color_resources.dart';
 import 'package:afropeep/resouces/constants.dart';
@@ -6,6 +8,8 @@ import 'package:afropeep/widgets/custom_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../resouces/functions.dart';
 
@@ -18,6 +22,7 @@ class AllEventScreen extends StatefulWidget {
 class _AllEventScreenState extends State<AllEventScreen> {
   List<EventModel> arrAllEventList = [];
   List<EventModel> arrEventList = [];
+  List<EventModel> arrRevAllEventList = [];
   Dio _dio = Dio();
   BuildContext _mainContex;
   @override
@@ -40,8 +45,8 @@ class _AllEventScreenState extends State<AllEventScreen> {
       if(value.statusCode == 200)
       {
         setState(() {
-          arrAllEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
-          print(arrAllEventList);
+          arrRevAllEventList =varJson.map((e) =>EventModel.fromJson(e)).toList();
+          arrAllEventList =arrRevAllEventList.reversed.toList();
           RemoveAppLoader(_mainContex);
         });
       }
@@ -60,7 +65,8 @@ class _AllEventScreenState extends State<AllEventScreen> {
                 children: [
                   GestureDetector(
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen()));
+                     var eventid = arrAllEventList[index].eventId.toString();
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EventDetailsScreen(eventid:eventid,eventType:"allEvent")));
                     },
                     child: Stack(
                       children: [
@@ -110,7 +116,9 @@ class _AllEventScreenState extends State<AllEventScreen> {
                                     SizedBox(width: 22.0,),
                                     Icon(Icons.location_on_outlined,color: ColorResources.whiteColor,size: 11,),
                                     SizedBox(width: 4.0,),
-                                    CustomText(text:arrAllEventList[index].longitude,fontSize: 10,color: ColorResources.whiteColor,),
+                                    CustomText(text:arrAllEventList[index].event_address != null?arrAllEventList[index].event_address:"",fontSize: 10,color: ColorResources.whiteColor,)
+                                    // getAddressFromLatLng(arrAllEventList[index].latitude,arrAllEventList[index].longitude),
+                                    /* CustomText(text:arrAllEventList[index].longitude,fontSize: 10,color: ColorResources.whiteColor,),*/
                                   ],
                                 ),
                                 SizedBox(height: 13.0,)
@@ -125,8 +133,11 @@ class _AllEventScreenState extends State<AllEventScreen> {
                 ],
               );
             }
+
         ),
       )
     );
   }
+
+
 }

@@ -1,4 +1,14 @@
-class UserModel {
+class EventDetailsById {
+  int eventId;
+  int userId;
+  String eventName;
+  String eventDate;
+  String latitude;
+  String longitude;
+  String aboutEvent;
+  String eventImg;
+  String createdAt;
+  String updatedAt;
   int uerId;
   int countryId;
   String mobileNumber;
@@ -13,16 +23,14 @@ class UserModel {
   String intrest;
   String lookingFor;
   String address;
+  String event_address;
   String lattitude;
-  String longitude;
   String status;
   String regiDatetime;
   String emailId;
   String distance;
   String college;
   String school;
-  String createdAt;
-  String updatedAt;
   int photoId;
   String photoUrl1;
   String photoUrl2;
@@ -31,18 +39,20 @@ class UserModel {
   String photoUrl5;
   String photoUrl6;
   String adddatetime;
-  int userId;
-  String countryName;
-  int countryCode;
-  String countryShortname;
-  String modeName;
-  String bio;
-  String religion;
-  String occupation;
-  String height;
 
-  UserModel(
-      {this.uerId,
+  EventDetailsById(
+      {this.eventId,
+        this.userId,
+        this.eventName,
+        this.eventDate,
+        this.latitude,
+        this.longitude,
+        this.aboutEvent,
+        this.eventImg,
+        this.createdAt,
+        this.updatedAt,
+        this.uerId,
+
         this.countryId,
         this.mobileNumber,
         this.modeId,
@@ -56,16 +66,14 @@ class UserModel {
         this.intrest,
         this.lookingFor,
         this.address,
+        this.event_address,
         this.lattitude,
-        this.longitude,
         this.status,
         this.regiDatetime,
         this.emailId,
         this.distance,
         this.college,
         this.school,
-        this.createdAt,
-        this.updatedAt,
         this.photoId,
         this.photoUrl1,
         this.photoUrl2,
@@ -73,18 +81,19 @@ class UserModel {
         this.photoUrl4,
         this.photoUrl5,
         this.photoUrl6,
-        this.adddatetime,
-        this.userId,
-        this.countryName,
-        this.countryCode,
-        this.countryShortname,
-        this.modeName,
-        this.bio,
-        this.religion,
-        this.occupation,
-        this.height});
+        this.adddatetime});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  EventDetailsById.fromJson(Map<String, dynamic> json) {
+    eventId = json['event_id'];
+    userId = json['user_id'];
+    eventName = json['event_name'];
+    eventDate = json['event_Date'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+    aboutEvent = json['about_event'];
+    eventImg = json['event_img'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
     uerId = json['uer_id'];
     countryId = json['country_id'];
     mobileNumber = json['mobile_number'];
@@ -99,16 +108,14 @@ class UserModel {
     intrest = json['intrest'];
     lookingFor = json['looking_for'];
     address = json['address'];
+    event_address = json['event_address'];
     lattitude = json['lattitude'];
-    longitude = json['longitude'];
     status = json['status'];
     regiDatetime = json['regi_datetime'];
     emailId = json['email_id'];
     distance = json['distance'];
     college = json['college'];
     school = json['school'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
     photoId = json['photo_id'];
     photoUrl1 = json['photo_url1'];
     photoUrl2 = json['photo_url2'];
@@ -117,19 +124,20 @@ class UserModel {
     photoUrl5 = json['photo_url5'];
     photoUrl6 = json['photo_url6'];
     adddatetime = json['adddatetime'];
-    userId = json['user_id'];
-    countryName = json['country_name'];
-    countryCode = json['country_code'];
-    countryShortname = json['country_shortname'];
-    modeName = json['mode_name'];
-    bio = json['bio'];
-    religion = json['religion'];
-    occupation = json['Occupation'];
-    height = json['height'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['event_id'] = this.eventId;
+    data['user_id'] = this.userId;
+    data['event_name'] = this.eventName;
+    data['event_Date'] = this.eventDate;
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
+    data['about_event'] = this.aboutEvent;
+    data['event_img'] = this.eventImg;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     data['uer_id'] = this.uerId;
     data['country_id'] = this.countryId;
     data['mobile_number'] = this.mobileNumber;
@@ -144,16 +152,14 @@ class UserModel {
     data['intrest'] = this.intrest;
     data['looking_for'] = this.lookingFor;
     data['address'] = this.address;
+    data['event_address'] = this.event_address;
     data['lattitude'] = this.lattitude;
-    data['longitude'] = this.longitude;
     data['status'] = this.status;
     data['regi_datetime'] = this.regiDatetime;
     data['email_id'] = this.emailId;
     data['distance'] = this.distance;
     data['college'] = this.college;
     data['school'] = this.school;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
     data['photo_id'] = this.photoId;
     data['photo_url1'] = this.photoUrl1;
     data['photo_url2'] = this.photoUrl2;
@@ -162,15 +168,6 @@ class UserModel {
     data['photo_url5'] = this.photoUrl5;
     data['photo_url6'] = this.photoUrl6;
     data['adddatetime'] = this.adddatetime;
-    data['user_id'] = this.userId;
-    data['country_name'] = this.countryName;
-    data['country_code'] = this.countryCode;
-    data['country_shortname'] = this.countryShortname;
-    data['mode_name'] = this.modeName;
-    data['bio'] = this.bio;
-    data['religion'] = this.religion;
-    data['Occupation'] = this.occupation;
-    data['height'] = this.height;
     return data;
   }
 }

@@ -36,7 +36,7 @@ TextEditingController _questionEightAnswer = TextEditingController() ;
 TextEditingController _questionNineAnswer = TextEditingController() ;
 TextEditingController _questionThrteenAnswer = TextEditingController() ;
 List<QuestionsModel> arrAllQuestionsList = [];
-var index = 1;
+var index;
 PageController _pageController = PageController();
 Dio _dio = Dio();
 class _QuestionsScreenState extends State<QuestionsScreen> {
@@ -46,6 +46,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {
+        index= 1;
         getQuestionsList();
         getUserId();
       });
@@ -75,6 +76,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorResources.primaryColor,
+      resizeToAvoidBottomInset: false, // this is new
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -101,14 +103,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                             curve: Curves.easeIn
                         );
                       }
-
-
                     },
                     child: Icon(Icons.arrow_back,color: ColorResources.whiteColor,)
                 ),
                 Expanded(child: Align(
                   alignment: Alignment.center,
-                  child: CustomText(text:'${index<13 ? '${0}${index}':index}/13',fontSize: 14,color: ColorResources.whiteColor,),
+                  child: CustomText(text:'${index<13 ? index>=10?'${index}':'${0}${index}':index}/13',fontSize: 14,color: ColorResources.whiteColor,),
                 ))
               ],
             )
@@ -116,7 +116,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           const SizedBox(
             height: 32.0,
           ),
-          Flexible(
+          Expanded(
             child:  Padding(
               padding: const EdgeInsets.only(left: 20,right: 20),
               child: PageView(
@@ -141,9 +141,239 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               ),
             ),
           ),
+          Expanded(child: Padding(
+            padding: const EdgeInsets.only(left: 20,right: 20),
+            child:  Align(
+                alignment: FractionalOffset.bottomRight,
+                child: CustomButton(
+                  height: 45,
+                  backgroundColor: ColorResources.blackColor,
+                  onPressed: ()async{
+                    // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                      setState(() {
+                        questionID = arrAllQuestionsList[index-1].qId.toString();
+                        print(questionID);
+                        if(questionID == "4")
+                          {
+                            print("called 4");
+                            if(_questionOneAnswer.text.isNotEmpty){
+                              questionValue = _questionOneAnswer.text.toString();
+                              insertAndNavigation();
+                            }
+                            else{
+                              setState(() {
+                                isValidQuestion = true;
+                                isValidMessage = "Please Enter Bio";
+                              });
+                            }
+                          }
+                        if(questionID == "5")
+                        {
+                          if(_questionTwoAnswer.text.isNotEmpty){
+                            questionValue = _questionTwoAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Nationality";
+                            });
+                          }
+                          print(questionValue);
+                        }
+                        if(questionID == "6")
+                        {
+                          if(_questionThreeAnswer.text.isNotEmpty){
+                            questionValue = _questionThreeAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Religion";
+                            });
+                          }
+                          print(questionValue);
+                        }
+                        if(questionID == "7")
+                        {
+                          if(_questionFourAnswer.text.isNotEmpty){
+                            questionValue = _questionFourAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Occupation";
+                            });
+                          }
+
+                          print(questionValue);
+                        }
+                        if(questionID == "8")
+                        {
+
+                          if(_questionFiveAnswer.text.isNotEmpty){
+                            questionValue = _questionFiveAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Enter Sign";
+                            });
+                          }
+
+                        }
+                        if(questionID == "9")
+                        {
+
+                          if(_questionSixAnswer.text.isNotEmpty){
+                            questionValue = _questionSixAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Tribe";
+                            });
+                          }
+                        }
+                        if(questionID == "10")
+                        {
+                          print("called");
+                          if(questionValue != ""  || questionSevenValue != null){
+                            questionValue = questionSevenValue.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Choose Relationship Status";
+                            });
+                          }
+                        }
+                        if(questionID == "11")
+                        {
+                          if(_questionEightAnswer.text.isNotEmpty){
+                            questionValue = _questionEightAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Height";
+                            });
+                          }
+                        }
+                        if(questionID == "12")
+                        {
+                          if(_questionNineAnswer.text.isNotEmpty){
+                            questionValue = _questionNineAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Number of Children";
+                            });
+                          }
+                        }
+                        if(questionID == "13")
+                        {
+
+                         print("called");
+                          if(questionValue != "" || questionTenValue != null){
+                            questionValue = questionTenValue.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Choose";
+                            });
+                          }
+                        }
+                        if(questionID == "14")
+                        {
+
+                          if(questionValue != null || questioneElevanValue != ""){
+                            print("called");
+                            questionValue = questioneElevanValue.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            print("ele");
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Choose";
+                            });
+                          }
+                        }
+                        if(questionID == "15")
+                        {
+                          if(questionValue != null || questionTwaleValue != ""){
+                            questionValue = questionTwaleValue.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Choose";
+                            });
+                          }
+                        }
+                        if(questionID == "16")
+                        {
+
+                          if(_questionThrteenAnswer.text.isNotEmpty){
+                            questionValue = _questionThrteenAnswer.text.toString();
+                            insertAndNavigation();
+                          }
+                          else{
+                            setState(() {
+                              isValidQuestion = true;
+                              isValidMessage = "Please Enter Language";
+                            });
+                          }
+                        }
+                      });
+                  },
+                  buttonText: index ==13 ? "Finish":'Next',
+                  fontSize: 16.0,
+                  textColor: ColorResources.whiteColor,
+                  width:MediaQuery.of(context).size.width/3.8,
+                )
+            ),
+          ),),
+          const SizedBox(
+            height: 34,
+          )
         ],
       ),
     );
+  }
+  insertAndNavigation()async{
+    await insertQuestionAnswer(questionID,questionValue,userid);
+    if(index < 13)
+    {
+      setState(() {
+        isValidQuestion = false;
+        isValidMessage = "";
+        questionID = "";
+        questionValue = "";
+        index +=1;
+      });
+      _pageController.animateToPage(_pageController.page.toInt() + 1,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeIn
+      );
+    }
+    else{
+      print("called");
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
+    }
   }
 }
 
@@ -152,7 +382,6 @@ class QuestionOne extends StatefulWidget {
   @override
   State<QuestionOne> createState() => _QuestionOneState();
 }
-
 class _QuestionOneState extends State<QuestionOne> {
   @override
   Widget build(BuildContext context) {
@@ -177,58 +406,6 @@ class _QuestionOneState extends State<QuestionOne> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionOneAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
-                      questionID = arrAllQuestionsList[0].qId.toString();
-                      questionValue = _questionOneAnswer.text.toString();
-                    });
-                    await insertQuestionAnswer(questionID,questionValue,userid);
-                    if(index < 13)
-                    {
-                      setState(() {
-                        isValidQuestion = false;
-                        isValidMessage = "";
-                        questionID = "";
-                        questionValue = "";
-                        index +=1;
-                      });
-                      _pageController.animateToPage(_pageController.page.toInt() + 1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeIn
-                      );
-                    }
-                    else{
-                      print("called");
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                    }
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Bio";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     ):Container();
   }
@@ -238,7 +415,6 @@ class QuestionTwo extends StatefulWidget {
   @override
   State<QuestionTwo> createState() => _QuestionTwoState();
 }
-
 class _QuestionTwoState extends State<QuestionTwo> {
   @override
   Widget build(BuildContext context) {
@@ -262,71 +438,16 @@ class _QuestionTwoState extends State<QuestionTwo> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionTwoAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
-                      questionID = arrAllQuestionsList[1].qId.toString();
-                      questionValue = _questionTwoAnswer.text.toString();
-                    });
-                    await insertQuestionAnswer(questionID,questionValue,userid);
-                    if(index < 13)
-                    {
-                      setState(() {
-                        isValidQuestion = false;
-                        isValidMessage = "";
-                        questionID = "";
-                        questionValue = "";
-                        index++;
-                      });
-                      _pageController.animateToPage(_pageController.page.toInt() + 1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeIn
-                      );
 
-
-                    }
-                    else{
-                      print("called");
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                    }
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Nationality";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
 }
 
-
 class QuestionThree extends StatefulWidget {
   @override
   State<QuestionThree> createState() => _QuestionThreeState();
 }
-
 class _QuestionThreeState extends State<QuestionThree> {
   @override
   Widget build(BuildContext context) {
@@ -350,63 +471,6 @@ class _QuestionThreeState extends State<QuestionThree> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionThreeAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
-
-                      questionID = arrAllQuestionsList[2].qId.toString();
-                      questionValue = _questionThreeAnswer.text.toString();
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
-
-
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Religion";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -417,7 +481,6 @@ class QuestionFour extends StatefulWidget {
   @override
   State<QuestionFour> createState() => _QuestionFourState();
 }
-
 class _QuestionFourState extends State<QuestionFour> {
   @override
   Widget build(BuildContext context) {
@@ -441,7 +504,7 @@ class _QuestionFourState extends State<QuestionFour> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
+       /* Expanded(child: Padding(
           padding: const EdgeInsets.only(left: 20,right: 20),
           child:  Align(
               alignment: FractionalOffset.bottomRight,
@@ -497,7 +560,7 @@ class _QuestionFourState extends State<QuestionFour> {
         ),),
         const SizedBox(
           height: 34,
-        )
+        )*/
       ],
     );
   }
@@ -531,60 +594,6 @@ class _QuestionFiveState extends State<QuestionFive> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionFiveAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
-
-                      questionID = arrAllQuestionsList[4].qId.toString();
-                      questionValue = _questionFiveAnswer.text.toString();
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Enter Sign";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -619,7 +628,7 @@ class _QuestionSixState extends State<QuestionSix> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
+       /* Expanded(child: Padding(
           padding: const EdgeInsets.only(left: 20,right: 20),
           child:  Align(
               alignment: FractionalOffset.bottomRight,
@@ -673,7 +682,7 @@ class _QuestionSixState extends State<QuestionSix> {
         ),),
         const SizedBox(
           height: 34,
-        )
+        )*/
       ],
     );
   }
@@ -693,17 +702,6 @@ class _QuestionSevenState extends State<QuestionSeven> {
       children: [
         CustomText(text: arrAllQuestionsList[6].qName,fontSize: 22,color: ColorResources.whiteColor,),
         const SizedBox(height: 30.0,),
-        /*Container(
-          width: MediaQuery.of(context).size.width,
-          child: CustomTextField(
-              controller: _questionTwoAnswer,
-              hintText: 'Enter Relationship Status',
-              fontSize: 14.0,
-              textInputType: TextInputType.multiline,
-              borderRadius: 29
-          ),
-        ),*/
-
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
@@ -711,7 +709,6 @@ class _QuestionSevenState extends State<QuestionSeven> {
         GestureDetector(
           onTap: (){
             setState(() {
-              // isSelected = !isSelected;
               questionSevenValue = "Single";
             });
           },
@@ -726,7 +723,7 @@ class _QuestionSevenState extends State<QuestionSeven> {
               ),
               child: ListTile(
                 title: const Text('Single'),
-                trailing: questionSevenValue == 'Single'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionSevenValue == 'Single'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
@@ -749,66 +746,11 @@ class _QuestionSevenState extends State<QuestionSeven> {
               ),
               child: ListTile(
                 title: const Text('Married'),
-                trailing: questionSevenValue == "Married"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionSevenValue == "Married"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
         const SizedBox(height: 14.0,),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  if(questionSevenValue !="" && questionSevenValue!= null)
-                  {
-                    setState(() {
-                      questionID = arrAllQuestionsList[6].qId.toString();
-                      questionValue = questionSevenValue;
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
-
-
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Choose Maritial Status";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -842,61 +784,7 @@ class _QuestionEightState extends State<QuestionEight> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionEightAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
 
-                      questionID = arrAllQuestionsList[7].qId.toString();
-                      questionValue = _questionEightAnswer.text.toString();
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Height";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -920,9 +808,9 @@ class _QuestionNineState extends State<QuestionNine> {
           width: MediaQuery.of(context).size.width,
           child: CustomTextField(
               controller: _questionNineAnswer,
-              hintText: 'Enter Number of Childern',
+              hintText: 'Enter Number of Children',
               fontSize: 14.0,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.text,
               borderRadius: 29
           ),
         ),
@@ -930,62 +818,7 @@ class _QuestionNineState extends State<QuestionNine> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionNineAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
-                      questionID = arrAllQuestionsList[8].qId.toString();
-                      questionValue = _questionNineAnswer.text.toString();
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
 
-
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Number Of Childern";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -1030,7 +863,7 @@ class _QuestionTenState extends State<QuestionTen> {
               ),
               child: ListTile(
                 title: const Text('Yes'),
-                trailing: questionTenValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionTenValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
@@ -1053,12 +886,12 @@ class _QuestionTenState extends State<QuestionTen> {
               ),
               child: ListTile(
                 title: const Text('No'),
-                trailing: questionTenValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionTenValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
         const SizedBox(height: 14.0,),
-        Expanded(child: Padding(
+       /* Expanded(child: Padding(
           padding: const EdgeInsets.only(left: 20,right: 20),
           child:  Align(
               alignment: FractionalOffset.bottomRight,
@@ -1112,7 +945,7 @@ class _QuestionTenState extends State<QuestionTen> {
         ),),
         const SizedBox(
           height: 34,
-        )
+        )*/
       ],
     );
   }
@@ -1158,7 +991,7 @@ class _QuestionElevanState extends State<QuestionElevan> {
               ),
               child: ListTile(
                 title: const Text('Yes'),
-                trailing: questioneElevanValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questioneElevanValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
@@ -1181,12 +1014,12 @@ class _QuestionElevanState extends State<QuestionElevan> {
               ),
               child: ListTile(
                 title: const Text('No'),
-                trailing: questioneElevanValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questioneElevanValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
 
-        Expanded(child: Padding(
+        /*Expanded(child: Padding(
           padding: const EdgeInsets.only(left: 20,right: 20),
           child:  Align(
               alignment: FractionalOffset.bottomRight,
@@ -1239,7 +1072,7 @@ class _QuestionElevanState extends State<QuestionElevan> {
         ),),
         const SizedBox(
           height: 34,
-        )
+        )*/
       ],
     );
   }
@@ -1283,7 +1116,7 @@ class _QuestionTwaleState extends State<QuestionTwale> {
               ),
               child: ListTile(
                 title: const Text('Yes'),
-                trailing: questionTwaleValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionTwaleValue == 'Yes'? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
@@ -1306,67 +1139,10 @@ class _QuestionTwaleState extends State<QuestionTwale> {
               ),
               child: ListTile(
                 title: const Text('No'),
-                trailing: questionTwaleValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.check_circle_outline_rounded ,color: Colors.black,),
+                trailing: questionTwaleValue == "No"? const Icon(Icons.check_circle ,color: Colors.black,):const Icon(Icons.circle_outlined ,color: Colors.black,),
               )
           ),
         ),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async {
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(questionTwaleValue != "")
-                  {
-                    setState(() {
-
-                      questionID = arrAllQuestionsList[11].qId.toString();
-                      questionValue = questionTwaleValue;
-                    });
-                  await insertQuestionAnswer(questionID,questionValue,userid);
-                      if(index < 13)
-                      {
-                        setState(() {
-                          isValidQuestion = false;
-                          isValidMessage = "";
-                          questionID = "";
-                          questionValue = "";
-                          index++;
-                        });
-                        _pageController.animateToPage(_pageController.page.toInt() + 1,
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeIn
-                        );
-
-
-                      }
-                      else{
-                        print("called");
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                      }
-
-
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Tribe";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -1400,59 +1176,7 @@ class _QuestionThreteenState extends State<QuestionThreteen> {
         isValidQuestion ?Container(
           padding: EdgeInsets.only(left: 2.0),
           child: CustomText(text: isValidMessage != ""?isValidMessage:"",color: Colors.white,fontSize: 11,),):Container(),
-        Expanded(child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20),
-          child:  Align(
-              alignment: FractionalOffset.bottomRight,
-              child: CustomButton(
-                height: 45,
-                backgroundColor: ColorResources.blackColor,
-                onPressed: ()async{
-                  // Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> ChooseGenderScreen()));
-                  if(_questionThrteenAnswer.text.isNotEmpty)
-                  {
-                    setState(() {
 
-                      questionID = arrAllQuestionsList[12].qId.toString();
-                      questionValue = _questionThrteenAnswer.text.toString();
-                    });
-                    await insertQuestionAnswer(questionID,questionValue,userid);
-                    if(index < 13)
-                    {
-                      setState(() {
-                        isValidQuestion = false;
-                        isValidMessage = "";
-                        questionID = "";
-                        questionValue = "";
-                        index++;
-                      });
-                      _pageController.animateToPage(_pageController.page.toInt() + 1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeIn
-                      );
-                    }
-                    else{
-                      print("called");
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CongratulationScreen()));
-                    }
-                  }
-                  else{
-                    setState(() {
-                      isValidQuestion = true;
-                      isValidMessage = "Please Enter Language";
-                    });
-                  }
-                },
-                buttonText: index ==13 ? "Finish":'Next',
-                fontSize: 16.0,
-                textColor: ColorResources.whiteColor,
-                width:MediaQuery.of(context).size.width/3.8,
-              )
-          ),
-        ),),
-        const SizedBox(
-          height: 34,
-        )
       ],
     );
   }
@@ -1462,6 +1186,7 @@ insertQuestionAnswer(String questionOneID,String questionOneValue,String userid 
   params['user_id'] = userid.toString();
   params['q_id'] = questionOneID.toString();
   params['answer'] = questionOneValue;
+  print("parameter = ${params}");
   await _dio.post(ADD_QUESTION,data:params).then((value)async {
     if(value.statusCode == 200)
     {

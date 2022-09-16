@@ -6,12 +6,14 @@ import 'package:afropeep/widgets/custom_button.dart';
 import 'package:afropeep/widgets/custom_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../resouces/constants.dart';
+import '../../resouces/functions.dart';
 import '../home_screens/home_screen.dart';
 
 
@@ -29,9 +31,15 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _determinePosition().then((value) async {
+    // Apploader(context);
+    getLocationAndAddress();
+    // RemoveAppLoader(context);
+  }
+  getLocationAndAddress()async{
+    await _determinePosition().then((value) async {
       latitude = value.latitude;
       longitude = value.longitude;
+      await getAddressFromLatLng();
     });
   }
   @override
@@ -95,7 +103,8 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
                         "user_id":userid,
                         'lattitude':longitude,
                         "longitude":latitude,
-                        "address":"demo",
+                        "address":currentAddress,
+                        "status" :"yes"
                       });
                       print(longitude);
                       print(latitude);
@@ -106,6 +115,7 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
                          if(value.statusCode == 200)
                          {
                            prefs.setBool('loginvalid', true);
+                           prefs.setBool("isCompleteCongrations",true);
                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
                          }
                        });
@@ -126,23 +136,23 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
     );
 
   }
+  var currentPostion;
+  var currentAddress;
   Future<Position> _determinePosition() async {
     //print("Permission block ");
     bool serviceEnabled;
     LocationPermission permission;
 
-
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-
-      return Future.error('Location services are disabled.');
+       await Geolocator.requestPermission();
     }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        _determinePosition();
+        // _determinePosition();
         return Future.error('Location permissions are denied');
       }
     }
@@ -176,6 +186,25 @@ class _CongratulationScreenState extends State<CongratulationScreen> {
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+    print("position = ${position}");
     return position;
   }
+  getAddressFromLatLng() async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          latitude,
+          longitude
+      );
+
+      Placemark place = placemarks[0];
+
+      setState(() {
+        currentAddress = "${place.locality}, ${place.subLocality}";
+      });
+      print("current Address = ${currentAddress}");
+    } catch (e) {
+      print(e);
+    }
+  }
+
 }

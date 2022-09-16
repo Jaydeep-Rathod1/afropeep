@@ -50,17 +50,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     print(userid);
     params['userid'] = userid;
     await _dio.post(GET_USER_BY_ID,data: jsonEncode(params)).then((value) {
-      print("value = ${value}");
+     var jsonData = value.data ;
       if(value.statusCode == 200)
       {
         setState(() {
-          arrAllUser =SingleUserModel.fromJson(value.data);
+          arrAllUser =SingleUserModel.fromJson(jsonData[0]);
           // _currentPassword.text = arrAllUser.password.toString();
           RemoveAppLoader(_mainContex);
         });
-
+        setValueChangePassword();
       }
     });
+  }
+  setValueChangePassword(){
+    if(arrAllUser.changepass == "no")
+      {
+        _currentPassword.text = arrAllUser.password;
+      }
+    else{
+      // _currentPassword.text = arrAllUser.password;
+    }
+
+
   }
   @override
   Widget build(BuildContext context) {
@@ -84,15 +95,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomTextField(controller: _currentPassword,fontSize: 14,hintText: 'Current Password',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
+              CustomTextField(controller: _currentPassword,textInputType: TextInputType.text,fontSize: 14,hintText: 'Current Password',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
 
               SizedBox(height: 20,),
-              CustomTextField(controller: _newPassword,fontSize: 14,hintText: 'New Password',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
+              CustomTextField(controller: _newPassword,textInputType: TextInputType.text,obSequreText:true,maxLines: 1,fontSize: 14,hintText: 'New Password',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
               isValidateNewPassword ?Container(
                 padding: EdgeInsets.only(left: 12.0),
-                child: CustomText(text: 'Please Choose Date',color: Colors.red,fontSize: 11,),):Container(),
+                child: CustomText(text: 'Please Enter Password',color: Colors.red,fontSize: 11,),):Container(),
               SizedBox(height: 20,),
-              CustomTextField(controller: _reTypeNewPassword,fontSize: 14,hintText: 'Re-type New Password ',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
+              CustomTextField(controller: _reTypeNewPassword,maxLines: 1,obSequreText: true,textInputType: TextInputType.text,fontSize: 14,hintText: 'Re-type New Password ',borderRadius: 30,enabledBorder: true,focusedBorder: true,),
               isValidateRetypePassword ?Container(
                 padding: EdgeInsets.only(left: 12.0),
                 child: CustomText(text: 'Please Re-type New Password',color: Colors.red,fontSize: 11,),):Container(),

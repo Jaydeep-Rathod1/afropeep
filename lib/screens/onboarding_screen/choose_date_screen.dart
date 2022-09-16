@@ -20,8 +20,9 @@ class ChooseDateScreen extends StatefulWidget {
   String lastName;
   ModeToStartModel chooseToStart;
   String chooseGender;
-
-  ChooseDateScreen({this.firstName,this.lastName,this.chooseToStart,this.chooseGender});
+  String collegeName;
+  String schoolName;
+  ChooseDateScreen({this.firstName,this.lastName,this.chooseToStart,this.chooseGender,this.schoolName,this.collegeName});
   @override
   State<ChooseDateScreen> createState() => _ChooseDateScreenState();
 }
@@ -32,6 +33,7 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
   TextEditingController _chooseYear = TextEditingController();
   DateTime selectedDate = DateTime.now();
   bool isValidateDate = false;
+  bool validateChoosedDate = false;
   Dio _dio = Dio();
   var newdate;
   DateTime newpickedDate;
@@ -209,7 +211,8 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
     params['lastname'] = widget.lastName.toString();
     params['birth_date'] = newdate;
     params['age'] =duration.years.toString();
-
+    params['school'] = widget.schoolName.toString();
+    params['collage'] = widget.collegeName.toString();
 
     await _dio.post(UPDATE_USER,data: params).then((value) {
       print("value = ${value}");
@@ -219,29 +222,39 @@ class _ChooseDateScreenState extends State<ChooseDateScreen> {
       }
     });
   }
+  DateTime pickedDate;
   CustomDateTimePicker()async{
-    DateTime pickedDate = await showDatePicker(
+    pickedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: DateTime.now().subtract(Duration(days: 1)),
         firstDate: DateTime(1950),
         //DateTime.now() - not to allow to choose before today.
-        lastDate: DateTime(2100));
+        lastDate: DateTime.now().subtract(Duration(days: 1)));
     if (pickedDate != null) {
-      newpickedDate = pickedDate;
-      String date =
-      DateFormat('dd').format(pickedDate);
-      String month =
-      DateFormat('MM').format(pickedDate);
-      String year =
-      DateFormat('yyyy').format(pickedDate);
-      // 10/08/2022
+      if(pickedDate == DateTime.now())
+        {
+            setState(() {
+              validateChoosedDate = true;
+            });
 
-      setState(() {
-        _chooseDate.text = date;
-        _chooseMonth.text = month;
-        _chooseYear.text = year;
-       newdate = "${date}/${month}/${year}";//set output date to TextField value.
-      });
+        }
+      else{
+        newpickedDate = pickedDate;
+        String date =
+        DateFormat('dd').format(pickedDate);
+        String month =
+        DateFormat('MM').format(pickedDate);
+        String year =
+        DateFormat('yyyy').format(pickedDate);
+        // 10/08/2022
+
+        setState(() {
+          _chooseDate.text = date;
+          _chooseMonth.text = month;
+          _chooseYear.text = year;
+          newdate = "${date}/${month}/${year}";//set output date to TextField value.
+        });
+      }
     } else {}
   }
 }

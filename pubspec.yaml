@@ -54,8 +54,12 @@ dependencies:
   geocoding:
   permission_handler:
   cached_network_image:
+  uuid:
   path_provider:
+  google_maps_flutter:
+
   age_calculator:
+  video_player:
 # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

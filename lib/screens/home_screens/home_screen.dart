@@ -84,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _title = 'Swipe';
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {});
       setSharedValue();
     });
   }

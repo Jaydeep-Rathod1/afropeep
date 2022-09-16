@@ -36,13 +36,12 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _mainContex = this.context;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
         await getSingleUserDetails();
         await genrateListImages();
-
-
-        // await genrateIntersts();
+        await genrateIntersts();
     });
   }
   getAge() {
@@ -83,16 +82,16 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
     }
     print(listofImages);
   }
-  getLocation()async  {
-    List<Placemark> placemarks = await placemarkFromCoordinates(arrAllUser.lattitude, arrAllUser.longitude);
-    print(placemarks);
-    Placemark place = placemarks[0];
-    var Address = '${place.subLocality}, ${place.locality}';
-    setState(() {
-      fullAddress = Address;
-    });
-    return fullAddress;
-  }
+  // getLocation()async  {
+  //   List<Placemark> placemarks = await placemarkFromCoordinates(arrAllUser.lattitude, arrAllUser.longitude);
+  //   print(placemarks);
+  //   Placemark place = placemarks[0];
+  //   var Address = '${place.subLocality}, ${place.locality}';
+  //   setState(() {
+  //     fullAddress = Address;
+  //   });
+  //   return fullAddress;
+  // }
   getSingleUserDetails()async{
     Apploader(_mainContex);
     Map params = Map();
@@ -142,7 +141,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(20),
-          child: Column(
+          child: arrAllUser != null? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -153,30 +152,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.network(arrAllUser.photoUrl1 != null && arrAllUser.photoUrl1.isNotEmpty? GET_IMAGES_LINK+arrAllUser.photoUrl1:"",width: MediaQuery.of(context).size.width,height:MediaQuery.of(context).size.height/1.2 ,fit: BoxFit.cover,),
-                      // child:photourlmain != null?CachedNetworkImage(
-                      //   imageUrl: GET_IMAGES_LINK+photourlmain,
-                      //   imageBuilder: (context, imageProvider) => Container(
-                      //   width: MediaQuery.of(context).size.width,
-                      //   height:MediaQuery.of(context).size.height/1.2 ,
-                      //     decoration: BoxDecoration(
-                      //       image: DecorationImage( //image size fill
-                      //         image: imageProvider,
-                      //         fit: BoxFit.cover,
-                      //       ),
-                      //     ),
-                      //   ),
-                      //   placeholder: (context, url) => Container(
-                      //     alignment: Alignment.center,
-                      //     padding: EdgeInsets.all(10),
-                      //     child: CircularProgressIndicator(
-                      //       color: ColorResources.primaryColor,
-                      //     ), // you can add pre loader iamge as well to show loading.
-                      //   ), //show progress  while loading image
-                      //   errorWidget: (context, url, error) => Image.asset("assets/images/noimage.png"),
-                      //   //show no iamge availalbe image on error laoding
-                      // ):Container(),
 
-                      // child:arrAllUser[0].photoUrl1 != null? NetworkImage(GET_IMAGES_LINK+arrAllUser[0].photoUrl1):AssetImage('assets/icons/img_user.png'),
                     ),
                     Positioned(
                         top: 20.0,
@@ -212,7 +188,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              CustomText(text:arrAllUser.firstname.isNotEmpty? '${arrAllUser.firstname} ${arrAllUser.lastname}, ${getAge()}':"",fontSize: 18.0,color: ColorResources.whiteColor,),
+                              CustomText(text:arrAllUser.firstname.isNotEmpty? '${arrAllUser.firstname} ${arrAllUser.lastname}, ${arrAllUser.age}':"",fontSize: 18.0,color: ColorResources.whiteColor,),
                               SizedBox(height: 5.0,),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +196,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                                 children: [
                                   Icon(Icons.location_on_outlined,size: 15.0,color: ColorResources.whiteColor,),
                                   SizedBox(width: 5.0,),
-                                  CustomText(text: fullAddress != null ?getLocation():"",fontSize: 12.0,color: ColorResources.whiteColor,),
+                                  CustomText(text: arrAllUser.address != null ?arrAllUser.address:"",fontSize: 12.0,color: ColorResources.whiteColor,),
                                 ],
                               )
                             ],
@@ -245,7 +221,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                   children: [
                     Image.asset('assets/icons/stariaght_icon.png'),
                     SizedBox(width: 4,),
-                    CustomText(text: 'Straight',),
+                    Expanded(child: Align(alignment: Alignment.center,child: CustomText(text: arrAllUser.gender,),)),
                     Container(
                       height: 40,
                       padding: const EdgeInsets.all(2),
@@ -259,7 +235,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                     ),
                     Image.asset('assets/icons/inch_icon.png',height: 16,width: 16,),
                     SizedBox(width: 4,),
-                    CustomText(text: arrAllUser.height != null ?arrAllUser.height:"No Data",),
+                    Expanded(child:Align(alignment: Alignment.center,child: CustomText(text: arrAllUser.height != null ?arrAllUser.height:"No Data",),),),
                     Container(
                       height: 40,
                       padding: const EdgeInsets.all(2),
@@ -273,7 +249,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                     ),
                     Image.asset('assets/icons/world_icon.png',height: 16,width: 16,),
                     SizedBox(width: 4,),
-                    CustomText(text: arrAllUser.religion != null? arrAllUser.religion:"No Data",),
+                    Expanded(child:Align(alignment: Alignment.center,child: CustomText(text: arrAllUser.religion != null? arrAllUser.religion:"No Data",),),),
                   ],
                 ),
               ),
@@ -326,7 +302,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                             SizedBox(width: 10.0,),
                             Expanded(
                                 flex: 2,
-                                child:CustomText(text: arrAllUser.occupation != null ?arrAllUser.occupation:'No Education',fontSize: 12,))
+                                child:CustomText(text: arrAllUser.college != null ?arrAllUser.college:'No Education',fontSize: 12,))
                           ],
                         ),
                       ),
@@ -352,7 +328,7 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                           children: [
                             Image.asset('assets/icons/book_icon.png',height: 16,width: 16,fit: BoxFit.cover,color: ColorResources.primaryColor,),
                             SizedBox(width: 10.0,),
-                            Expanded(child: CustomText(text: 'Des Bâtisseurs',fontSize: 12,))
+                            Expanded(child: CustomText(text: arrAllUser.school != null ?arrAllUser.school:'No Data',fontSize: 12,))
                           ],
                         ),
                       ),
@@ -420,19 +396,35 @@ class _MyprofileScreenState extends State<MyprofileScreen> {
                 ],
               )
             ],
-          ),
+          ):Container(),
         ),
       ),
     );
   }
+  var newlistofInterstes = [];
   genrateIntersts(){
-    var intersts = arrAllUser.intrest;
-    var removedBrackets = intersts.substring(1, intersts.length - 1);
+    newlistofInterstes =[];
+    var interstsnew = arrAllUser.intrest;
+    var removedBrackets;
+    if(interstsnew != null)
+      {
+         removedBrackets = interstsnew.substring(1, interstsnew.length - 1);
+         listofInterstes = removedBrackets.split(",");
+         for(int i =0;i<listofInterstes.length;i++)
+           {
+             newlistofInterstes.add(listofInterstes[i].replaceAll(RegExp('[^A-Za-z0-9]'), ''));
+           }
+         print(newlistofInterstes);
+      }
+    else{
+      listofInterstes = [];
+    }
+
     print(removedBrackets);
-    listofInterstes = removedBrackets.split(",");
-    return listofInterstes.length>0?Wrap(
+
+    return newlistofInterstes.length>0?Wrap(
       spacing: 10.0,
-      children: listofInterstes.map((e) {
+      children: newlistofInterstes.map((e) {
         return CustomButton(
           fontSize: 12,
           backgroundColor: ColorResources.primaryColor,
