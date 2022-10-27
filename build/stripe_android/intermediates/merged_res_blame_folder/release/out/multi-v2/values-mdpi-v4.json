@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\myprojects\\afropeep\\build\\stripe_android\\intermediates\\merged_res\\release\\values-mdpi-v4\\values-mdpi-v4.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\2ac5a6992095bf887693cc20297aada9\\transformed\\jetified-payments-core-20.12.0\\res\\values-mdpi-v4\\values-mdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "56",
+                        "endOffsets": "107"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "D:\\myprojects\\afropeep\\build\\stripe_android\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-mdpi-v4\\values-mdpi-v4.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\2ac5a6992095bf887693cc20297aada9\\transformed\\jetified-payments-core-20.12.0\\res\\values-mdpi-v4\\values-mdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "56",
+                        "endOffsets": "107"
+                    }
+                }
+            ]
+        }
+    ]
+}
