@@ -1,0 +1,116 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.connectycube.flutter.connectycube_flutter_call_kit-mergeReleaseResources-11:/values-sr/values-sr.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\97eea8b3c6c7f11a0971ef9530dace79\\transformed\\core-1.6.0\\res\\values-sr\\values-sr.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "368",
+                        "endColumns": "100",
+                        "endOffsets": "464"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\05ea1771e5bbbce7a1e14d3a34b236ad\\transformed\\jetified-play-services-basement-17.2.1\\res\\values-sr\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "247",
+                        "endColumns": "188",
+                        "endOffsets": "435"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "105",
+                        "endColumns": "188",
+                        "endOffsets": "289"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\d5f985ce1a8a25e5efcc514f59d8afdd\\transformed\\jetified-firebase-messaging-23.0.0\\res\\values-sr\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "207",
+                        "endColumns": "69",
+                        "endOffsets": "276"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "294",
+                        "endColumns": "73",
+                        "endOffsets": "363"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.connectycube.flutter.connectycube_flutter_call_kit-merged_res-13:/values-sr/values-sr.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\97eea8b3c6c7f11a0971ef9530dace79\\transformed\\core-1.6.0\\res\\values-sr\\values-sr.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "368",
+                        "endColumns": "100",
+                        "endOffsets": "464"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\05ea1771e5bbbce7a1e14d3a34b236ad\\transformed\\jetified-play-services-basement-17.2.1\\res\\values-sr\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "247",
+                        "endColumns": "188",
+                        "endOffsets": "435"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "105",
+                        "endColumns": "188",
+                        "endOffsets": "289"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Divyesh Rathod\\.gradle\\caches\\transforms-3\\d5f985ce1a8a25e5efcc514f59d8afdd\\transformed\\jetified-firebase-messaging-23.0.0\\res\\values-sr\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "207",
+                        "endColumns": "69",
+                        "endOffsets": "276"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "294",
+                        "endColumns": "73",
+                        "endOffsets": "363"
+                    }
+                }
+            ]
+        }
+    ]
+}

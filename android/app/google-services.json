@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "136553608266",
+    "project_id": "afropeepproject",
+    "storage_bucket": "afropeepproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136553608266:android:86a55234bcefc72008a2b3",
+        "android_client_info": {
+          "package_name": "com.example.afropeep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136553608266-6qhkqs3jhutjsdv6ct5t81n5nsok1b7i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.afropeep",
+            "certificate_hash": "15549eea158b4db03b91c99dd64cc811fc871a00"
+          }
+        },
+        {
+          "client_id": "136553608266-mdvue2pca0goce376jc1cg43a8ia0f3b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.afropeep",
+            "certificate_hash": "27c3caac73d0b53e202b43f1eaab2ed108eace39"
+          }
+        },
+        {
+          "client_id": "136553608266-slbvjphma09edeik1aotdlje4lgc2igo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.afropeep",
+            "certificate_hash": "5194f9163e8e7d5d521cc6c2a1917d4b4674b905"
+          }
+        },
+        {
+          "client_id": "136553608266-kssf32bva1lak6irbjlc5f88ia6gsumm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0EPXkTjqN9olLXnrZ8rwBfunHynxrcZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136553608266-kssf32bva1lak6irbjlc5f88ia6gsumm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "136553608266-b73tv0ckv4om6v3ald66vp8crksig8k9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.afropeep"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
